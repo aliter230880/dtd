@@ -1,0 +1,34 @@
+# Локальные артефакты и архивы — не для git
+_archives/
+dist/
+*.fig
+*.zip
+
+# Flutter / Dart
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/generated_plugin_registrant.dart
+**/packaged_compile_time_sdk_stamp
+
+# Node (admin/firebase/functions)
+**/node_modules/
+
+# IDE / ОС
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Локальные пути SDK и логи
+**/local.properties
+firebase-debug.log
+crashlytics-build.log
+
+# 🔑 Секреты подписи — НИКОГДА не коммитить
+**/*.jks
+**/key.properties
+**/serviceAccount*.json
+**/GoogleService-Info.plist.bak

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+    <string name="app_name">DTD app</string>
+    <string name="facebook_app_id">1714981552657336</string>
+    <string name="facebook_client_token">70dfc18f3e09a6cc978dab57dac73cd7</string>
+    <string name="fb_login_protocol_scheme">fb1714981552657336</string>
+</resources>

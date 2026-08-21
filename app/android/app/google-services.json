@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "380857780783",
+    "project_id": "dealertodealer-84957",
+    "storage_bucket": "dealertodealer-84957.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:380857780783:android:f77a3ba5f785c32e4694da",
+        "android_client_info": {
+          "package_name": "com.sprestay.autodealapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "380857780783-p3c0llfbps7e5p968947hrg6l9nlbndq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sprestay.autodealapp",
+            "certificate_hash": "bfab152b859a11f5d11285aa8646d1f13c8dd157"
+          }
+        },
+        {
+          "client_id": "380857780783-unv2d7glt8utvahk6gbsoumcppfah4m3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sprestay.autodealapp",
+            "certificate_hash": "cdbbd9f7391047acb9e2905082762d90412573b2"
+          }
+        },
+        {
+          "client_id": "380857780783-0hqq30ag4fdirstq0qcmtf6qa7vbft4m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvPLGvyLis5Bnazk3iqNN-I7JECJoFXAI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "380857780783-0hqq30ag4fdirstq0qcmtf6qa7vbft4m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "380857780783-cj96mv2ho83apjrpkuhi6258vsfjhvol.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sprestay.autodealapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

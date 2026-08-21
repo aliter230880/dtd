@@ -1,0 +1,4 @@
+NSCameraUsageDescription = "For upload images";
+NSPhotoLibraryUsageDescription = "For upload images";
+PermissionGroupNotification = "For receive app notifications";
+NSLocationWhenInUseUsageDescription = "For easy access to your current location";

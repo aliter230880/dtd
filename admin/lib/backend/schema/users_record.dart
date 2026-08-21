@@ -1,0 +1,326 @@
+import 'dart:async';
+
+
+import 'package:collection/collection.dart';
+
+import '/backend/schema/util/firestore_util.dart';
+import '/backend/schema/enums/enums.dart';
+
+import 'index.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+
+class UsersRecord extends FirestoreRecord {
+  UsersRecord._(
+    super.reference,
+    super.data,
+  ) {
+    _initializeFields();
+  }
+
+  // "email" field.
+  String? _email;
+  String get email => _email ?? '';
+  bool hasEmail() => _email != null;
+
+  // "display_name" field.
+  String? _displayName;
+  String get displayName => _displayName ?? '';
+  bool hasDisplayName() => _displayName != null;
+
+  // "photo_url" field.
+  String? _photoUrl;
+  String get photoUrl => _photoUrl ?? '';
+  bool hasPhotoUrl() => _photoUrl != null;
+
+  // "uid" field.
+  String? _uid;
+  String get uid => _uid ?? '';
+  bool hasUid() => _uid != null;
+
+  // "created_time" field.
+  DateTime? _createdTime;
+  DateTime? get createdTime => _createdTime;
+  bool hasCreatedTime() => _createdTime != null;
+
+  // "phone_number" field.
+  String? _phoneNumber;
+  String get phoneNumber => _phoneNumber ?? '';
+  bool hasPhoneNumber() => _phoneNumber != null;
+
+  // "type" field.
+  UserType? _type;
+  UserType? get type => _type;
+  bool hasType() => _type != null;
+
+  // "balance" field.
+  double? _balance;
+  double get balance => _balance ?? 0.0;
+  bool hasBalance() => _balance != null;
+
+  // "rate" field.
+  double? _rate;
+  double get rate => _rate ?? 0.0;
+  bool hasRate() => _rate != null;
+
+  // "profile_filled" field.
+  bool? _profileFilled;
+  bool get profileFilled => _profileFilled ?? false;
+  bool hasProfileFilled() => _profileFilled != null;
+
+  // "carrier_company_name" field.
+  String? _carrierCompanyName;
+  String get carrierCompanyName => _carrierCompanyName ?? '';
+  bool hasCarrierCompanyName() => _carrierCompanyName != null;
+
+  // "carrier_number" field.
+  String? _carrierNumber;
+  String get carrierNumber => _carrierNumber ?? '';
+  bool hasCarrierNumber() => _carrierNumber != null;
+
+  // "carrier_driver_license" field.
+  String? _carrierDriverLicense;
+  String get carrierDriverLicense => _carrierDriverLicense ?? '';
+  bool hasCarrierDriverLicense() => _carrierDriverLicense != null;
+
+  // "file" field.
+  String? _file;
+  String get file => _file ?? '';
+  bool hasFile() => _file != null;
+
+  // "diller_license" field.
+  String? _dillerLicense;
+  String get dillerLicense => _dillerLicense ?? '';
+  bool hasDillerLicense() => _dillerLicense != null;
+
+  // "diller_driver_license" field.
+  String? _dillerDriverLicense;
+  String get dillerDriverLicense => _dillerDriverLicense ?? '';
+  bool hasDillerDriverLicense() => _dillerDriverLicense != null;
+
+   // "diller_driver_date" field.
+  DateTime? _dillerDriverDate;
+  DateTime? get dillerDriverDate => _dillerDriverDate;
+  bool hasDillerDriverDate() => _dillerDriverDate != null;
+
+  // "diller_cars" field.
+  List<String>? _dillerCars;
+  List<String> get dillerCars => _dillerCars ?? const [];
+  bool hasDillerCars() => _dillerCars != null;
+
+  // "banned" field.
+  bool? _banned;
+  bool get banned => _banned ?? false;
+  bool hasBanned() => _banned != null;
+
+  // "banned_time" field.
+  DateTime? _bannedTime;
+  DateTime? get bannedTime => _bannedTime;
+  bool hasBannedTime() => _bannedTime != null;
+
+  // "last_name" field.
+  String? _lastName;
+  String get lastName => _lastName ?? '';
+  bool hasLastName() => _lastName != null;
+
+  // "rate_count" field.
+  int? _rateCount;
+  int get rateCount => _rateCount ?? 0;
+  bool hasRateCount() => _rateCount != null;
+
+  // "free_deal_count" field.
+  int? _freeDealCount;
+  int get freeDealCount => _freeDealCount ?? 0;
+  bool hasFreeDealCount() => _freeDealCount != null;
+
+  // "free_response_count" field.
+  int? _freeResponseCount;
+  int get freeResponseCount => _freeResponseCount ?? 0;
+  bool hasFreeResponseCount() => _freeResponseCount != null;
+
+  // "free_response_count" field.
+  double? _carrierTotalEarning;
+  double get carrierTotalEarning => _carrierTotalEarning ?? 0.0;
+  
+
+  void _initializeFields() {
+    _email = snapshotData['email'] as String?;
+    _displayName = snapshotData['display_name'] as String?;
+    _photoUrl = snapshotData['photo_url'] as String?;
+    _uid = snapshotData['uid'] as String?;
+    _createdTime = snapshotData['created_time'] as DateTime?;
+    _phoneNumber = snapshotData['phone_number'] as String?;
+    _type = deserializeEnum<UserType>(snapshotData['type']);
+    _balance = castToType<double>(snapshotData['balance']);
+    _rate = castToType<double>(snapshotData['rate']);
+    _profileFilled = snapshotData['profile_filled'] as bool?;
+    _carrierCompanyName = snapshotData['carrier_company_name'] as String?;
+    _carrierNumber = snapshotData['carrier_number'] as String?;
+    _carrierDriverLicense = snapshotData['carrier_driver_license'] as String?;
+    _file = snapshotData['file'] as String?;
+    _dillerLicense = snapshotData['diller_license'] as String?;
+    _dillerDriverLicense = snapshotData['diller_driver_license'] as String?;
+    _dillerDriverDate = snapshotData['diller_driver_date'] as DateTime?;
+    _dillerCars = getDataList(snapshotData['diller_cars']);
+    _banned = snapshotData['banned'] as bool?;
+    _bannedTime = snapshotData['banned_time'] as DateTime?;
+    _lastName = snapshotData['last_name'] as String?;
+    _rateCount = castToType<int>(snapshotData['rate_count']);
+    _freeDealCount = castToType<int>(snapshotData['free_deal_count']);
+    _freeResponseCount = castToType<int>(snapshotData['free_response_count']);
+    _carrierTotalEarning = castToType<double>(snapshotData['carrier_total_earning']);
+  }
+
+  static CollectionReference get collection =>
+      FirebaseFirestore.instance.collection('users');
+
+  static Stream<UsersRecord> getDocument(DocumentReference ref) =>
+      ref.snapshots().map((s) => UsersRecord.fromSnapshot(s));
+
+  static Future<UsersRecord> getDocumentOnce(DocumentReference ref) =>
+      ref.get().then((s) => UsersRecord.fromSnapshot(s));
+
+  static UsersRecord fromSnapshot(DocumentSnapshot snapshot) => UsersRecord._(
+        snapshot.reference,
+        mapFromFirestore(snapshot.data() as Map<String, dynamic>),
+      );
+
+  static UsersRecord getDocumentFromData(
+    Map<String, dynamic> data,
+    DocumentReference reference,
+  ) =>
+      UsersRecord._(reference, mapFromFirestore(data));
+
+  @override
+  String toString() =>
+      'UsersRecord(reference: ${reference.path}, data: $snapshotData)';
+
+  @override
+  int get hashCode => reference.path.hashCode;
+
+  @override
+  bool operator ==(other) =>
+      other is UsersRecord &&
+      reference.path.hashCode == other.reference.path.hashCode;
+}
+
+Map<String, dynamic> createUsersRecordData({
+  String? email,
+  String? displayName,
+  String? photoUrl,
+  String? uid,
+  DateTime? createdTime,
+  String? phoneNumber,
+  UserType? type,
+  double? balance,
+  double? rate,
+  bool? profileFilled,
+  String? carrierCompanyName,
+  String? carrierNumber,
+  String? carrierDriverLicense,
+  String? file,
+  String? dillerLicense,
+  String? dillerDriverLicense,
+  String? dillerDriverData,
+  bool? banned,
+  DateTime? bannedTime,
+  String? lastName,
+  int? rateCount,
+  int? freeDealCount,
+  int? freeResponseCount,
+  double? carrierTotalEarning,
+}) {
+  final firestoreData = mapToFirestore(
+    <String, dynamic>{
+      'email': email,
+      'display_name': displayName,
+      'photo_url': photoUrl,
+      'uid': uid,
+      'created_time': createdTime,
+      'phone_number': phoneNumber,
+      'type': type,
+      'balance': balance,
+      'rate': rate,
+      'profile_filled': profileFilled,
+      'carrier_company_name': carrierCompanyName,
+      'carrier_number': carrierNumber,
+      'carrier_driver_license': carrierDriverLicense,
+      'file': file,
+      'diller_license': dillerLicense,
+      'diller_driver_license': dillerDriverLicense,
+      'diller_driver_data': dillerDriverData,
+      'banned': banned,
+      'banned_time': bannedTime,
+      'last_name': lastName,
+      'rate_count': rateCount,
+      'free_deal_count': freeDealCount,
+      'free_response_count': freeResponseCount,
+      'carrier_total_earning': carrierTotalEarning,
+    }.withoutNulls,
+  );
+
+  return firestoreData;
+}
+
+class UsersRecordDocumentEquality implements Equality<UsersRecord> {
+  const UsersRecordDocumentEquality();
+
+  @override
+  bool equals(UsersRecord? e1, UsersRecord? e2) {
+    const listEquality = ListEquality();
+    return e1?.email == e2?.email &&
+        e1?.displayName == e2?.displayName &&
+        e1?.photoUrl == e2?.photoUrl &&
+        e1?.uid == e2?.uid &&
+        e1?.createdTime == e2?.createdTime &&
+        e1?.phoneNumber == e2?.phoneNumber &&
+        e1?.type == e2?.type &&
+        e1?.balance == e2?.balance &&
+        e1?.rate == e2?.rate &&
+        e1?.profileFilled == e2?.profileFilled &&
+        e1?.carrierCompanyName == e2?.carrierCompanyName &&
+        e1?.carrierNumber == e2?.carrierNumber &&
+        e1?.carrierDriverLicense == e2?.carrierDriverLicense &&
+        e1?.file == e2?.file &&
+        e1?.dillerLicense == e2?.dillerLicense &&
+        e1?.dillerDriverLicense == e2?.dillerDriverLicense &&
+        e1?.dillerDriverDate == e2?.dillerDriverDate &&
+        listEquality.equals(e1?.dillerCars, e2?.dillerCars) &&
+        e1?.banned == e2?.banned &&
+        e1?.bannedTime == e2?.bannedTime &&
+        e1?.lastName == e2?.lastName &&
+        e1?.rateCount == e2?.rateCount &&
+        e1?.freeDealCount == e2?.freeDealCount &&
+        e1?.freeResponseCount == e2?.freeResponseCount;
+  }
+
+  @override
+  int hash(UsersRecord? e) => const ListEquality().hash([
+        e?.email,
+        e?.displayName,
+        e?.photoUrl,
+        e?.uid,
+        e?.createdTime,
+        e?.phoneNumber,
+        e?.type,
+        e?.balance,
+        e?.rate,
+        e?.profileFilled,
+        e?.carrierCompanyName,
+        e?.carrierNumber,
+        e?.carrierDriverLicense,
+        e?.file,
+        e?.dillerLicense,
+        e?.dillerDriverLicense,
+        e?.dillerDriverDate,
+        e?.dillerCars,
+        e?.banned,
+        e?.bannedTime,
+        e?.lastName,
+        e?.rateCount,
+        e?.freeDealCount,
+        e?.freeResponseCount
+      ]);
+
+  @override
+  bool isValidKey(Object? o) => o is UsersRecord;
+}
