@@ -1,7 +1,7 @@
 import 'package:auto_deal_app/flutter_flow/flutter_flow_google_map.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:geocoding/geocoding.dart';
 
+import '/custom_code/geocoding_service.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -49,13 +49,9 @@ class _FilterLocationPageWidgetState extends State<FilterLocationPageWidget> {
     currentUserLocationValue = await queryCurrentUserLocation();
 
     if (currentUserLocationValue != null) {
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(currentUserLocationValue!.latitude, currentUserLocationValue!.longitude);
-
-      if (placemarks.isNotEmpty) {
-        Placemark place = placemarks[0];
-
-        _model.locationTextController!.text = getAddressFormattedName(place);
+      final place = await GeocodingService.placeFromLocation(currentUserLocationValue!);
+      if (place != null) {
+        _model.locationTextController!.text = place.address;
       }
     }
     setState(() {
@@ -68,17 +64,6 @@ class _FilterLocationPageWidgetState extends State<FilterLocationPageWidget> {
     _model.dispose();
 
     super.dispose();
-  }
-
-  String getAddressFormattedName(Placemark? placemark) {
-    if (placemark == null) return '';
-    String name = '';
-    if (placemark.country != null) name += '${placemark.country}, ';
-    if (placemark.administrativeArea != null) name += '${placemark.administrativeArea}, ';
-    if (placemark.locality != null) name += '${placemark.locality}, ';
-    if (placemark.street != null) name += '${placemark.street}, ';
-    if (placemark.name != null) name += '${placemark.name}';
-    return name;
   }
 
   @override

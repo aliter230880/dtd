@@ -2,12 +2,11 @@
 
 import 'dart:math';
 
-import 'package:flutter/widgets.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import '/custom_code/geocoding_service.dart';
 import '/flutter_flow/flutter_flow_google_map.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -61,46 +60,34 @@ class _CreateDeal3CompWidgetState extends State<CreateDeal3CompWidget> {
   String sessionToken = randomString(5, 7, true, false, false);
 
   void onSearchTap(Prediction prediction) async {
-    String? lat = prediction.lat;
-    String? lng = prediction.lng;
-    
-    // Fallback: if lat/lng not in prediction, geocode the address
-    if (lat == null || lng == null) {
+    final description = prediction.description ?? '';
+    LatLng? pos;
+
+    final lat = prediction.lat;
+    final lng = prediction.lng;
+    if (lat != null && lng != null) {
+      pos = LatLng(double.parse(lat), double.parse(lng));
+    } else {
+      // В браузере Places не отдаёт координаты в prediction, догеокодируем адрес.
       try {
-        final locations = await locationFromAddress(prediction.description ?? '');
-        if (locations.isNotEmpty) {
-          lat = locations.first.latitude.toString();
-          lng = locations.first.longitude.toString();
-        }
+        pos = await GeocodingService.locationFromAddress(description);
       } catch (e) {
         print('Geocoding error: $e');
       }
     }
-    
-    if (lat == null || lng == null) {
+
+    if (!mounted) return;
+
+    if (pos == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Не удалось определить гео-позицию')));
       return;
     }
-    
-    final latD = double.parse(lat);
-    final lngD = double.parse(lng);
-    final LatLng pos = LatLng(latD, lngD);
-    _model.addressTextController.text = prediction.description ?? '-';
-    FFAppState().createDealAddress = prediction.description ?? '-';
+
+    _model.addressTextController.text = description.isEmpty ? '-' : description;
+    FFAppState().createDealAddress = description.isEmpty ? '-' : description;
     FFAppState().createDealGeo = pos;
     FocusScope.of(context).unfocus();
     setState(() {});
-  }
-
-  Future<Placemark?> _getAddressFromLatLng(LatLng pos) async {
-    List<Placemark> placemarks = await placemarkFromCoordinates(pos.latitude, pos.longitude);
-
-    if (placemarks.isNotEmpty) {
-      Placemark place = placemarks[0];
-      return place;
-    }
-
-    return null;
   }
 
   void onCameraTap(LatLng pos) async {
@@ -114,13 +101,13 @@ class _CreateDeal3CompWidgetState extends State<CreateDeal3CompWidget> {
     });
 
     try {
-      final placemark = await _getAddressFromLatLng(pos);
-      if (placemark != null) {
+      final place = await GeocodingService.placeFromLocation(pos);
+      if (place != null) {
         final String markerIdVal = 'marker_id_${pos.hashCode}}';
         setState(() {
           flutterFlowMarker = FlutterFlowMarker(markerIdVal, pos);
-          _model.addressTextController.text = getAddressFormattedName(placemark);
-          FFAppState().createDealAddress = getAddressFormattedName(placemark);
+          _model.addressTextController.text = place.address;
+          FFAppState().createDealAddress = place.address;
           FFAppState().createDealGeo = pos;
           loading = false;
         });
@@ -144,17 +131,6 @@ class _CreateDeal3CompWidgetState extends State<CreateDeal3CompWidget> {
         loading = false;
       });
     }
-  }
-
-  String getAddressFormattedName(Placemark? placemark) {
-    if (placemark == null) return '';
-    String name = '';
-    if (placemark.country != null) name += '${placemark.country}, ';
-    if (placemark.administrativeArea != null) name += '${placemark.administrativeArea}, ';
-    if (placemark.locality != null) name += '${placemark.locality}, ';
-    if (placemark.street != null) name += '${placemark.street}, ';
-    if (placemark.name != null) name += '${placemark.name}';
-    return name;
   }
 
   Future<PlaceMarkWrapper?> searchQuery(LatLng pos) async {

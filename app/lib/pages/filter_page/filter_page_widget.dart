@@ -2,10 +2,10 @@
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:geocoding/geocoding.dart';
 
 import '/backend/backend.dart';
 import '/backend/schema/enums/enums.dart';
+import '/custom_code/geocoding_service.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -66,28 +66,12 @@ class _FilterPageWidgetState extends State<FilterPageWidget> {
 
   void getLocationAddress() async {
     if (_model.filterByGeo != null) {
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(_model.filterByGeo!.latitude, _model.filterByGeo!.longitude);
-
-      if (placemarks.isNotEmpty) {
-        Placemark place = placemarks[0];
-
-        _model.locationTextController!.text = getAddressFormattedName(place);
+      final place = await GeocodingService.placeFromLocation(_model.filterByGeo!);
+      if (place != null) {
+        _model.locationTextController!.text = place.address;
       }
-
       setState(() {});
     }
-  }
-
-  String getAddressFormattedName(Placemark? placemark) {
-    if (placemark == null) return '';
-    String name = '';
-    if (placemark.country != null) name += '${placemark.country}, ';
-    if (placemark.administrativeArea != null) name += '${placemark.administrativeArea}, ';
-    if (placemark.locality != null) name += '${placemark.locality}, ';
-    if (placemark.street != null) name += '${placemark.street}, ';
-    if (placemark.name != null) name += '${placemark.name}';
-    return name;
   }
 
   @override
