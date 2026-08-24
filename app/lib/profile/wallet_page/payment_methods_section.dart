@@ -1,5 +1,6 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -106,13 +107,36 @@ class PaymentMethodsSection extends StatefulWidget {
   State<PaymentMethodsSection> createState() => _PaymentMethodsSectionState();
 }
 
+/// Минимальная сумма произвольного пополнения, дублируется на сервере.
+const int kCustomMinCredits = 50;
+const int kCustomMaxCredits = 10000;
+
 class _PaymentMethodsSectionState extends State<PaymentMethodsSection> {
+  /// 0..2 — готовые пакеты, [kTopUpPackages.length] — своя сумма.
   int _selectedPackage = 1;
   String _selectedMethod = kPaymentMethods.first.id;
   bool _loading = false;
 
+  final _customController = TextEditingController();
+
+  bool get _isCustom => _selectedPackage == kTopUpPackages.length;
+
+  int? get _credits {
+    if (!_isCustom) return kTopUpPackages[_selectedPackage].credits;
+    final parsed = int.tryParse(_customController.text.trim());
+    if (parsed == null) return null;
+    if (parsed < kCustomMinCredits || parsed > kCustomMaxCredits) return null;
+    return parsed;
+  }
+
   PaymentMethodOption get _method =>
       kPaymentMethods.firstWhere((m) => m.id == _selectedMethod);
+
+  @override
+  void dispose() {
+    _customController.dispose();
+    super.dispose();
+  }
 
   Future<void> _startCheckout() async {
     final method = _method;
@@ -121,13 +145,20 @@ class _PaymentMethodsSectionState extends State<PaymentMethodsSection> {
       return;
     }
 
+    final credits = _credits;
+    if (credits == null) {
+      _showMessage(
+        'Введите сумму от \$$kCustomMinCredits до \$$kCustomMaxCredits',
+      );
+      return;
+    }
+
     setState(() => _loading = true);
     try {
-      final package = kTopUpPackages[_selectedPackage];
       final callable =
           FirebaseFunctions.instance.httpsCallable('createCheckoutSession');
       final result = await callable.call(<String, dynamic>{
-        'credits': package.credits,
+        'credits': credits,
         'methodTypes': method.methodTypes,
       });
 
@@ -158,58 +189,67 @@ class _PaymentMethodsSectionState extends State<PaymentMethodsSection> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: kTopUpPackages.asMap().entries.map((entry) {
-              final isSelected = entry.key == _selectedPackage;
-              return Expanded(
-                child: Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 8, 0),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12.0),
-                    onTap: () => setState(() => _selectedPackage = entry.key),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? FlutterFlowTheme.of(context).primary
-                            : FlutterFlowTheme.of(context).secondaryBackground,
-                        borderRadius: BorderRadius.circular(12.0),
-                        border: Border.all(
-                          color: isSelected
-                              ? FlutterFlowTheme.of(context).primary
-                              : FlutterFlowTheme.of(context).border,
-                          width: 1.5,
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            '${entry.value.credits}',
-                            style: FlutterFlowTheme.of(context).titleMedium.override(
-                                  fontFamily: 'Inter',
-                                  color: FlutterFlowTheme.of(context).primaryText,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.0,
-                                  useGoogleFonts: false,
-                                ),
-                          ),
-                          const SizedBox(height: 4.0),
-                          Text(
-                            entry.value.priceLabel,
-                            style: FlutterFlowTheme.of(context).bodySmall.override(
-                                  fontFamily: 'Inter',
-                                  color: FlutterFlowTheme.of(context).primaryText,
-                                  letterSpacing: 0.0,
-                                  useGoogleFonts: false,
-                                ),
-                          ),
-                        ],
-                      ),
+            children: [
+              ...kTopUpPackages.asMap().entries.map((entry) {
+                return Expanded(
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 8, 0),
+                    child: _buildPackageTile(
+                      index: entry.key,
+                      title: '${entry.value.credits}',
+                      subtitle: entry.value.priceLabel,
                     ),
                   ),
+                );
+              }),
+              Expanded(
+                child: _buildPackageTile(
+                  index: kTopUpPackages.length,
+                  title: 'Своя',
+                  subtitle: 'от \$$kCustomMinCredits',
                 ),
-              );
-            }).toList(),
+              ),
+            ],
           ),
+          if (_isCustom) ...[
+            const SizedBox(height: 12.0),
+            TextFormField(
+              controller: _customController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              onChanged: (_) => setState(() {}),
+              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                    fontFamily: 'Inter',
+                    letterSpacing: 0.0,
+                    useGoogleFonts: false,
+                  ),
+              decoration: InputDecoration(
+                labelText: 'Сумма в долларах',
+                hintText: 'от $kCustomMinCredits до $kCustomMaxCredits',
+                labelStyle: FlutterFlowTheme.of(context).bodySmall.override(
+                      fontFamily: 'Inter',
+                      letterSpacing: 0.0,
+                      useGoogleFonts: false,
+                    ),
+                prefixText: '\$ ',
+                filled: true,
+                fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide(
+                    color: FlutterFlowTheme.of(context).border,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide(
+                    color: FlutterFlowTheme.of(context).primary,
+                    width: 1.5,
+                  ),
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: 24.0),
           Text(
             'Способ оплаты',
@@ -228,7 +268,9 @@ class _PaymentMethodsSectionState extends State<PaymentMethodsSection> {
             onPressed: _loading ? null : _startCheckout,
             text: _loading
                 ? 'Создаём платёж...'
-                : 'Оплатить ${kTopUpPackages[_selectedPackage].priceLabel}',
+                : _credits == null
+                    ? 'Укажите сумму'
+                    : 'Оплатить \$$_credits',
             options: FFButtonOptions(
               width: double.infinity,
               height: 56.0,
@@ -247,6 +289,57 @@ class _PaymentMethodsSectionState extends State<PaymentMethodsSection> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPackageTile({
+    required int index,
+    required String title,
+    required String subtitle,
+  }) {
+    final isSelected = index == _selectedPackage;
+    return InkWell(
+      borderRadius: BorderRadius.circular(12.0),
+      onTap: () => setState(() => _selectedPackage = index),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? FlutterFlowTheme.of(context).primary
+              : FlutterFlowTheme.of(context).secondaryBackground,
+          borderRadius: BorderRadius.circular(12.0),
+          border: Border.all(
+            color: isSelected
+                ? FlutterFlowTheme.of(context).primary
+                : FlutterFlowTheme.of(context).border,
+            width: 1.5,
+          ),
+        ),
+        child: Column(
+          children: [
+            Text(
+              title,
+              style: FlutterFlowTheme.of(context).titleMedium.override(
+                    fontFamily: 'Inter',
+                    color: FlutterFlowTheme.of(context).primaryText,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.0,
+                    useGoogleFonts: false,
+                  ),
+            ),
+            const SizedBox(height: 4.0),
+            Text(
+              subtitle,
+              style: FlutterFlowTheme.of(context).bodySmall.override(
+                    fontFamily: 'Inter',
+                    color: FlutterFlowTheme.of(context).primaryText,
+                    letterSpacing: 0.0,
+                    useGoogleFonts: false,
+                  ),
+            ),
+          ],
+        ),
       ),
     );
   }

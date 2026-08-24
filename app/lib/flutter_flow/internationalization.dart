@@ -1256,6 +1256,52 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
     "buy_succes": {
       "ru": "Оплата прошла успешно",
       "en": "Payment was successful",
+    },
+    "carrier_verification_title": {
+      "ru": "Верификация перевозчика",
+      "en": "Carrier verification",
+    },
+    "carrier_verification_desc": {
+      "ru":
+          "Укажите номера DOT и MC — мы сверим их с реестром FMCSA. После проверки в ваших заказах появится отметка «Проверен».",
+      "en":
+          "Enter your DOT and MC numbers — we check them against the FMCSA registry. Once confirmed, a \"Verified\" badge appears on your deals.",
+    },
+    "dot_number_label": {
+      "ru": "Номер DOT",
+      "en": "DOT number",
+    },
+    "dot_number_hint": {
+      "ru": "Например, 1234567",
+      "en": "For example, 1234567",
+    },
+    "mc_number_label": {
+      "ru": "Номер MC",
+      "en": "MC number",
+    },
+    "mc_number_hint": {
+      "ru": "Например, 123456",
+      "en": "For example, 123456",
+    },
+    "verify_button": {
+      "ru": "Проверить",
+      "en": "Verify",
+    },
+    "verifying_text": {
+      "ru": "Проверяем...",
+      "en": "Verifying...",
+    },
+    "verification_success": {
+      "ru": "Верификация пройдена",
+      "en": "Verification complete",
+    },
+    "verification_error": {
+      "ru": "Не удалось пройти верификацию",
+      "en": "Verification failed",
+    },
+    "validation_error": {
+      "ru": "Проверьте введённые номера",
+      "en": "Check the entered numbers",
     }
   },
   // Miscellaneous
