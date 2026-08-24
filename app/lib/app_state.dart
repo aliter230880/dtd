@@ -93,6 +93,12 @@ class FFAppState extends ChangeNotifier {
     _createDealCarPhotos.insert(index, value);
   }
 
+  bool _createDealInsuranceRequired = false;
+  bool get createDealInsuranceRequired => _createDealInsuranceRequired;
+  set createDealInsuranceRequired(bool value) {
+    _createDealInsuranceRequired = value;
+  }
+
   void clearAll() {
     _createDealCarName = '';
     _createDealCarPhotos = ['', '', '', '', '', '', '', '', ''];
@@ -104,6 +110,7 @@ class FFAppState extends ChangeNotifier {
     _createDealPrice = '';
     _createDealPayType = 'card';
     _creatDealFiles = ['', '', '', '', ''];
+    _createDealInsuranceRequired = false;
   }
 
   String _createDealDescription = '';

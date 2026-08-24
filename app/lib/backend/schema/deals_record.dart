@@ -145,6 +145,36 @@ class DealsRecord extends FirestoreRecord {
   DocumentReference? get cancelReason => _cancelReason;
   bool hascancelReason() => _cancelReason != null;
 
+  // "insurance_required" field.
+  bool? _insuranceRequired;
+  bool get insuranceRequired => _insuranceRequired ?? false;
+  bool hasInsuranceRequired() => _insuranceRequired != null;
+
+  // "insurance_quote_id" field.
+  String? _insuranceQuoteId;
+  String get insuranceQuoteId => _insuranceQuoteId ?? '';
+  bool hasInsuranceQuoteId() => _insuranceQuoteId != null;
+
+  // "insurance_provider" field.
+  String? _insuranceProvider;
+  String get insuranceProvider => _insuranceProvider ?? '';
+  bool hasInsuranceProvider() => _insuranceProvider != null;
+
+  // "insurance_premium" field.
+  int? _insurancePremium;
+  int get insurancePremium => _insurancePremium ?? 0;
+  bool hasInsurancePremium() => _insurancePremium != null;
+
+  // "insurance_policy_id" field.
+  String? _insurancePolicyId;
+  String get insurancePolicyId => _insurancePolicyId ?? '';
+  bool hasInsurancePolicyId() => _insurancePolicyId != null;
+
+  // "insurance_policy_url" field.
+  String? _insurancePolicyUrl;
+  String get insurancePolicyUrl => _insurancePolicyUrl ?? '';
+  bool hasInsurancePolicyUrl() => _insurancePolicyUrl != null;
+
   void _initializeFields() {
     _carName = snapshotData['car_name'] as String?;
     _carNumber = snapshotData['car_number'] as String?;
@@ -175,6 +205,12 @@ class DealsRecord extends FirestoreRecord {
     _requestLocation = snapshotData['request_location'] as LatLng?;
     _payTokenValue = castToType<int>(snapshotData['pay_token_value']);
      _cancelReason = snapshotData['cancel_reason'] as DocumentReference?;
+    _insuranceRequired = snapshotData['insurance_required'] as bool?;
+    _insuranceQuoteId = snapshotData['insurance_quote_id'] as String?;
+    _insuranceProvider = snapshotData['insurance_provider'] as String?;
+    _insurancePremium = castToType<int>(snapshotData['insurance_premium']);
+    _insurancePolicyId = snapshotData['insurance_policy_id'] as String?;
+    _insurancePolicyUrl = snapshotData['insurance_policy_url'] as String?;
   }
 
   static CollectionReference get collection => FirebaseFirestore.instance.collection('deals');
@@ -228,6 +264,12 @@ Map<String, dynamic> createDealsRecordData({
   LatLng? requestLocation,
   DateTime? geoRequestDate,
   int? payTokenValue,
+  bool? insuranceRequired,
+  String? insuranceQuoteId,
+  String? insuranceProvider,
+  int? insurancePremium,
+  String? insurancePolicyId,
+  String? insurancePolicyUrl,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -252,6 +294,12 @@ Map<String, dynamic> createDealsRecordData({
       'request_location': requestLocation,
       'geo_request_date': geoRequestDate,
       'pay_token_value': payTokenValue,
+      'insurance_required': insuranceRequired,
+      'insurance_quote_id': insuranceQuoteId,
+      'insurance_provider': insuranceProvider,
+      'insurance_premium': insurancePremium,
+      'insurance_policy_id': insurancePolicyId,
+      'insurance_policy_url': insurancePolicyUrl,
     }.withoutNulls,
   );
 

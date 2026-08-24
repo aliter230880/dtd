@@ -141,16 +141,70 @@ class _DillerDealCardWidgetState extends State<DillerDealCardWidget> {
                             ),
                             Padding(
                               padding: const EdgeInsetsDirectional.fromSTEB(6.0, 0.0, 0.0, 0.0),
-                              child: Text(
-                                currencyFormat.format(widget.deal.price),
-                                maxLines: 1,
-                                style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                      fontFamily: 'Inter',
-                                      fontSize: 18.0,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FontWeight.w600,
-                                      useGoogleFonts: false,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    currencyFormat.format(widget.deal.price),
+                                    maxLines: 1,
+                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                          fontFamily: 'Inter',
+                                          fontSize: 18.0,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.w600,
+                                          useGoogleFonts: false,
+                                        ),
+                                  ),
+                                  if (widget.deal.insuranceRequired == true)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF4CAF50),
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                        child: Text(
+                                          '🛡️ Застраховано',
+                                          style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                fontFamily: 'Inter',
+                                                color: Colors.white,
+                                                fontSize: 11.0,
+                                                letterSpacing: 0.0,
+                                                useGoogleFonts: false,
+                                              ),
+                                        ),
+                                      ),
                                     ),
+                                  FutureBuilder<UsersRecord>(
+                                    future: UsersRecord.getDocumentOnce(widget.deal.owner!),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData && snapshot.data?.verified == true) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(top: 4),
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: Colors.green,
+                                              borderRadius: BorderRadius.circular(6),
+                                            ),
+                                            child: Text(
+                                              '✓ Проверен',
+                                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                    fontFamily: 'Inter',
+                                                    color: Colors.white,
+                                                    fontSize: 11.0,
+                                                    letterSpacing: 0.0,
+                                                    useGoogleFonts: false,
+                                                  ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return const SizedBox.shrink();
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
                           ],

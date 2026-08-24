@@ -111,6 +111,7 @@ class _CreateDealPageWidgetState extends State<CreateDealPageWidget> {
       "files": carFilesUrl,
       "responses": [],
       "created_time": FieldValue.serverTimestamp(),
+      "insurance_required": FFAppState().createDealInsuranceRequired,
     };
 
     final dealsRecord = DealsRecord.collection.doc();

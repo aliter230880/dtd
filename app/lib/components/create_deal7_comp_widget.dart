@@ -2,6 +2,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/upload_data.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +41,36 @@ class _CreateDeal7CompWidgetState extends State<CreateDeal7CompWidget> {
     _model.maybeDispose();
 
     super.dispose();
+  }
+
+  /// Call Cloud Function to calculate insurance quote
+  /// NOTE: For MVP during deal creation, dealId is null so this call is skipped.
+  /// The Cloud Function integration will be added in the deal edit flow after creation.
+  Future<void> _calculateInsuranceQuote(String? dealId) async {
+    if (dealId == null) {
+      // During deal creation, dealId is not available yet
+      // Insurance quote will be calculated after deal is created
+      setState(() {
+        _model.insuranceQuoteCost = null; // Show "Расчёт стоимости..." text
+      });
+      return;
+    }
+
+    try {
+      final callable = FirebaseFunctions.instance.httpsCallable('calculateInsuranceQuote');
+      final result = await callable.call(<String, dynamic>{
+        'dealId': dealId,
+      });
+
+      if (result.data != null && result.data['cost'] != null) {
+        setState(() {
+          _model.insuranceQuoteCost = result.data['cost'] as int;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error calculating insurance quote: $e');
+      // Keep showing "Расчёт стоимости..." on error
+    }
   }
 
   @override
@@ -206,6 +237,64 @@ class _CreateDeal7CompWidgetState extends State<CreateDeal7CompWidget> {
                   },
                 );
               },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CheckboxListTile(
+                  value: FFAppState().createDealInsuranceRequired,
+                  onChanged: (bool? value) async {
+                    setState(() {
+                      FFAppState().createDealInsuranceRequired = value ?? false;
+                    });
+                    
+                    // Calculate insurance quote when checkbox is checked
+                    if (value == true) {
+                      // For MVP: dealId is null during creation, so just set placeholder
+                      // Cloud Function will be integrated in deal edit flow later
+                      await _calculateInsuranceQuote(null);
+                    } else {
+                      // Clear quote when unchecked
+                      setState(() {
+                        _model.insuranceQuoteCost = null;
+                      });
+                    }
+                  },
+                  title: Text(
+                    'Требуется страховка',
+                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily: 'Inter',
+                          letterSpacing: 0.0,
+                          useGoogleFonts: false,
+                        ),
+                  ),
+                  activeColor: FlutterFlowTheme.of(context).primary,
+                  checkColor: FlutterFlowTheme.of(context).primaryText,
+                  dense: true,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                ),
+                if (FFAppState().createDealInsuranceRequired)
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(40.0, 4.0, 0.0, 0.0),
+                    child: Text(
+                      _model.insuranceQuoteCost != null
+                          ? 'Страховка: \$${(_model.insuranceQuoteCost! / 100).toStringAsFixed(2)}'
+                          : 'Расчёт стоимости...',
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Inter',
+                            color: FlutterFlowTheme.of(context).secondaryText,
+                            fontSize: 14.0,
+                            letterSpacing: 0.0,
+                            useGoogleFonts: false,
+                          ),
+                    ),
+                  ),
+              ],
             ),
           ),
           FFButtonWidget(

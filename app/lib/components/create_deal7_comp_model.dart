@@ -8,6 +8,9 @@ class CreateDeal7CompModel extends FlutterFlowModel<CreateDeal7CompWidget> {
   bool isDataUploading = false;
   FFUploadedFile uploadedLocalFile =
       FFUploadedFile(bytes: Uint8List.fromList([]));
+  
+  /// Insurance quote cost in cents
+  int? insuranceQuoteCost;
 
   @override
   void initState(BuildContext context) {}

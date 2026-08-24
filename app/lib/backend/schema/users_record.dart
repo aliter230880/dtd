@@ -132,6 +132,86 @@ class UsersRecord extends FirestoreRecord {
   double? _carrierTotalEarning;
   double get carrierTotalEarning => _carrierTotalEarning ?? 0.0;
 
+  // "verified" field.
+  bool? _verified;
+  bool get verified => _verified ?? false;
+  bool hasVerified() => _verified != null;
+
+  // "verification_status" field.
+  String? _verificationStatus;
+  String get verificationStatus => _verificationStatus ?? '';
+  bool hasVerificationStatus() => _verificationStatus != null;
+
+  // "verification_date" field.
+  DateTime? _verificationDate;
+  DateTime? get verificationDate => _verificationDate;
+  bool hasVerificationDate() => _verificationDate != null;
+
+  // "verification_expired" field.
+  bool? _verificationExpired;
+  bool get verificationExpired => _verificationExpired ?? false;
+  bool hasVerificationExpired() => _verificationExpired != null;
+
+  // "dot_number" field.
+  String? _dotNumber;
+  String get dotNumber => _dotNumber ?? '';
+  bool hasDotNumber() => _dotNumber != null;
+
+  // "mc_number" field.
+  String? _mcNumber;
+  String get mcNumber => _mcNumber ?? '';
+  bool hasMcNumber() => _mcNumber != null;
+
+  // "company_legal_name" field.
+  String? _companyLegalName;
+  String get companyLegalName => _companyLegalName ?? '';
+  bool hasCompanyLegalName() => _companyLegalName != null;
+
+  // "fmcsa_safety_rating" field.
+  String? _fmcsaSafetyRating;
+  String get fmcsaSafetyRating => _fmcsaSafetyRating ?? '';
+  bool hasFmcsaSafetyRating() => _fmcsaSafetyRating != null;
+
+  // "fmcsa_authority_status" field.
+  String? _fmcsaAuthorityStatus;
+  String get fmcsaAuthorityStatus => _fmcsaAuthorityStatus ?? '';
+  bool hasFmcsaAuthorityStatus() => _fmcsaAuthorityStatus != null;
+
+  // "fmcsa_address" field.
+  String? _fmcsaAddress;
+  String get fmcsaAddress => _fmcsaAddress ?? '';
+  bool hasFmcsaAddress() => _fmcsaAddress != null;
+
+  // "dealer_license_number" field.
+  String? _dealerLicenseNumber;
+  String get dealerLicenseNumber => _dealerLicenseNumber ?? '';
+  bool hasDealerLicenseNumber() => _dealerLicenseNumber != null;
+
+  // "dealer_license_state" field.
+  String? _dealerLicenseState;
+  String get dealerLicenseState => _dealerLicenseState ?? '';
+  bool hasDealerLicenseState() => _dealerLicenseState != null;
+
+  // "verification_rejection_reason" field.
+  String? _verificationRejectionReason;
+  String get verificationRejectionReason => _verificationRejectionReason ?? '';
+  bool hasVerificationRejectionReason() => _verificationRejectionReason != null;
+
+  // "verification_document_urls" field.
+  List<String>? _verificationDocumentUrls;
+  List<String> get verificationDocumentUrls => _verificationDocumentUrls ?? const [];
+  bool hasVerificationDocumentUrls() => _verificationDocumentUrls != null;
+
+  // "verification_request_date" field.
+  DateTime? _verificationRequestDate;
+  DateTime? get verificationRequestDate => _verificationRequestDate;
+  bool hasVerificationRequestDate() => _verificationRequestDate != null;
+
+  // "verification_admin_id" field.
+  String? _verificationAdminId;
+  String get verificationAdminId => _verificationAdminId ?? '';
+  bool hasVerificationAdminId() => _verificationAdminId != null;
+
   void _initializeFields() {
     _email = snapshotData['email'] as String?;
     _displayName = snapshotData['display_name'] as String?;
@@ -157,6 +237,22 @@ class UsersRecord extends FirestoreRecord {
     _freeDealCount = castToType<int>(snapshotData['free_deal_count']);
     _freeResponseCount = castToType<int>(snapshotData['free_response_count']);
     _carrierTotalEarning = castToType<double>(snapshotData['carrier_total_earning']);
+    _verified = snapshotData['verified'] as bool?;
+    _verificationStatus = snapshotData['verification_status'] as String?;
+    _verificationDate = snapshotData['verification_date'] as DateTime?;
+    _verificationExpired = snapshotData['verification_expired'] as bool?;
+    _dotNumber = snapshotData['dot_number'] as String?;
+    _mcNumber = snapshotData['mc_number'] as String?;
+    _companyLegalName = snapshotData['company_legal_name'] as String?;
+    _fmcsaSafetyRating = snapshotData['fmcsa_safety_rating'] as String?;
+    _fmcsaAuthorityStatus = snapshotData['fmcsa_authority_status'] as String?;
+    _fmcsaAddress = snapshotData['fmcsa_address'] as String?;
+    _dealerLicenseNumber = snapshotData['dealer_license_number'] as String?;
+    _dealerLicenseState = snapshotData['dealer_license_state'] as String?;
+    _verificationRejectionReason = snapshotData['verification_rejection_reason'] as String?;
+    _verificationDocumentUrls = getDataList(snapshotData['verification_document_urls']);
+    _verificationRequestDate = snapshotData['verification_request_date'] as DateTime?;
+    _verificationAdminId = snapshotData['verification_admin_id'] as String?;
   }
 
   static CollectionReference get collection => FirebaseFirestore.instance.collection('users');
@@ -212,6 +308,21 @@ Map<String, dynamic> createUsersRecordData({
   int? freeDealCount,
   int? freeResponseCount,
   double? carrierTotalEarning,
+  bool? verified,
+  String? verificationStatus,
+  DateTime? verificationDate,
+  bool? verificationExpired,
+  String? dotNumber,
+  String? mcNumber,
+  String? companyLegalName,
+  String? fmcsaSafetyRating,
+  String? fmcsaAuthorityStatus,
+  String? fmcsaAddress,
+  String? dealerLicenseNumber,
+  String? dealerLicenseState,
+  String? verificationRejectionReason,
+  DateTime? verificationRequestDate,
+  String? verificationAdminId,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -238,6 +349,21 @@ Map<String, dynamic> createUsersRecordData({
       'free_deal_count': freeDealCount,
       'free_response_count': freeResponseCount,
       'carrier_total_earning': carrierTotalEarning,
+      'verified': verified,
+      'verification_status': verificationStatus,
+      'verification_date': verificationDate,
+      'verification_expired': verificationExpired,
+      'dot_number': dotNumber,
+      'mc_number': mcNumber,
+      'company_legal_name': companyLegalName,
+      'fmcsa_safety_rating': fmcsaSafetyRating,
+      'fmcsa_authority_status': fmcsaAuthorityStatus,
+      'fmcsa_address': fmcsaAddress,
+      'dealer_license_number': dealerLicenseNumber,
+      'dealer_license_state': dealerLicenseState,
+      'verification_rejection_reason': verificationRejectionReason,
+      'verification_request_date': verificationRequestDate,
+      'verification_admin_id': verificationAdminId,
     }.withoutNulls,
   );
 
@@ -269,7 +395,23 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e1?.dillerDriverDate == e2?.dillerDriverDate &&
         listEquality.equals(e1?.dillerCars, e2?.dillerCars) &&
         e1?.banned == e2?.banned &&
-        e1?.bannedTime == e2?.bannedTime;
+        e1?.bannedTime == e2?.bannedTime &&
+        e1?.verified == e2?.verified &&
+        e1?.verificationStatus == e2?.verificationStatus &&
+        e1?.verificationDate == e2?.verificationDate &&
+        e1?.verificationExpired == e2?.verificationExpired &&
+        e1?.dotNumber == e2?.dotNumber &&
+        e1?.mcNumber == e2?.mcNumber &&
+        e1?.companyLegalName == e2?.companyLegalName &&
+        e1?.fmcsaSafetyRating == e2?.fmcsaSafetyRating &&
+        e1?.fmcsaAuthorityStatus == e2?.fmcsaAuthorityStatus &&
+        e1?.fmcsaAddress == e2?.fmcsaAddress &&
+        e1?.dealerLicenseNumber == e2?.dealerLicenseNumber &&
+        e1?.dealerLicenseState == e2?.dealerLicenseState &&
+        e1?.verificationRejectionReason == e2?.verificationRejectionReason &&
+        listEquality.equals(e1?.verificationDocumentUrls, e2?.verificationDocumentUrls) &&
+        e1?.verificationRequestDate == e2?.verificationRequestDate &&
+        e1?.verificationAdminId == e2?.verificationAdminId;
   }
 
   @override
@@ -293,7 +435,23 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e?.dillerDriverDate,
         e?.dillerCars,
         e?.banned,
-        e?.bannedTime
+        e?.bannedTime,
+        e?.verified,
+        e?.verificationStatus,
+        e?.verificationDate,
+        e?.verificationExpired,
+        e?.dotNumber,
+        e?.mcNumber,
+        e?.companyLegalName,
+        e?.fmcsaSafetyRating,
+        e?.fmcsaAuthorityStatus,
+        e?.fmcsaAddress,
+        e?.dealerLicenseNumber,
+        e?.dealerLicenseState,
+        e?.verificationRejectionReason,
+        e?.verificationDocumentUrls,
+        e?.verificationRequestDate,
+        e?.verificationAdminId,
       ]);
 
   @override

@@ -61,12 +61,27 @@ class _CreateDeal3CompWidgetState extends State<CreateDeal3CompWidget> {
   String sessionToken = randomString(5, 7, true, false, false);
 
   void onSearchTap(Prediction prediction) async {
-    final lat = prediction.lat;
-    final lng = prediction.lng;
+    String? lat = prediction.lat;
+    String? lng = prediction.lng;
+    
+    // Fallback: if lat/lng not in prediction, geocode the address
+    if (lat == null || lng == null) {
+      try {
+        final locations = await locationFromAddress(prediction.description ?? '');
+        if (locations.isNotEmpty) {
+          lat = locations.first.latitude.toString();
+          lng = locations.first.longitude.toString();
+        }
+      } catch (e) {
+        print('Geocoding error: $e');
+      }
+    }
+    
     if (lat == null || lng == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Не удалось определить гео-позицию')));
       return;
     }
+    
     final latD = double.parse(lat);
     final lngD = double.parse(lng);
     final LatLng pos = LatLng(latD, lngD);

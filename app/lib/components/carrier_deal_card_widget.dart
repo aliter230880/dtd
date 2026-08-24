@@ -152,6 +152,55 @@ class _MainInfo extends StatelessWidget {
                               useGoogleFonts: false,
                             ),
                       ),
+                      if (deal?.insuranceRequired == true)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF4CAF50),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              '🛡️ Застраховано',
+                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                    fontFamily: 'Inter',
+                                    color: Colors.white,
+                                    fontSize: 11.0,
+                                    letterSpacing: 0.0,
+                                    useGoogleFonts: false,
+                                  ),
+                            ),
+                          ),
+                        ),
+                      FutureBuilder<UsersRecord>(
+                        future: UsersRecord.getDocumentOnce((deal?.owner ?? currentUserReference)!),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData && snapshot.data?.verified == true) {
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  '✓ Проверен',
+                                  style: FlutterFlowTheme.of(context).bodySmall.override(
+                                        fontFamily: 'Inter',
+                                        color: Colors.white,
+                                        fontSize: 11.0,
+                                        letterSpacing: 0.0,
+                                        useGoogleFonts: false,
+                                      ),
+                                ),
+                              ),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
                       FutureBuilder(
                         future: GeoUtil.getDistance(deal?.location),
                         builder: (context, snapshot) {
