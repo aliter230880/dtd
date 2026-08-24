@@ -32,3 +32,10 @@ crashlytics-build.log
 **/key.properties
 **/serviceAccount*.json
 **/GoogleService-Info.plist.bak
+
+# Локальные артефакты сборок и материалы заказчика
+сборки/
+*.pdf
+*.jpg
+*.png.bak
+.kiro/
