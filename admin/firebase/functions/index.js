@@ -6,3 +6,13 @@ exports.onUserDeleted = functions.auth.user().onDelete(async (user) => {
   let firestore = admin.firestore();
   let userRef = firestore.doc("admins/" + user.uid);
 });
+
+// Insurance Cloud Functions
+const { calculateInsuranceQuote } = require("./lib/insurance/calculateQuote");
+exports.calculateInsuranceQuote = calculateInsuranceQuote;
+
+// KYC Cloud Functions
+const { verifyCarrier } = require("./lib/kyc/verifyCarrier");
+const { checkVerificationExpiry } = require("./lib/kyc/checkVerificationExpiry");
+exports.verifyCarrier = verifyCarrier;
+exports.checkVerificationExpiry = checkVerificationExpiry;
