@@ -1,4 +1,5 @@
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -167,7 +168,13 @@ class _PaymentMethodsSectionState extends State<PaymentMethodsSection> {
         _showMessage('Не удалось создать платёж, попробуйте позже');
         return;
       }
-      await launchUrl(Uri.parse(url), webOnlyWindowName: '_self');
+      // В браузере уходим на Stripe в том же окне, на мобильных — во внешний
+      // браузер, иначе Checkout не сможет завершить оплату.
+      await launchUrl(
+        Uri.parse(url),
+        mode: kIsWeb ? LaunchMode.platformDefault : LaunchMode.externalApplication,
+        webOnlyWindowName: '_self',
+      );
     } catch (e) {
       debugPrint('Checkout error: $e');
       _showMessage('Ошибка оплаты: $e');
