@@ -16,3 +16,9 @@ const { verifyCarrier } = require("./lib/kyc/verifyCarrier");
 const { checkVerificationExpiry } = require("./lib/kyc/checkVerificationExpiry");
 exports.verifyCarrier = verifyCarrier;
 exports.checkVerificationExpiry = checkVerificationExpiry;
+
+// Payments (Stripe Checkout): начисление баланса делает только вебхук
+const { createCheckoutSession } = require("./lib/payments/createCheckoutSession");
+const { stripeWebhook } = require("./lib/payments/stripeWebhook");
+exports.createCheckoutSession = createCheckoutSession;
+exports.stripeWebhook = stripeWebhook;

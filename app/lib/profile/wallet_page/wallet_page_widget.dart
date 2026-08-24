@@ -8,8 +8,10 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/revenue_cat_util.dart' as revenue_cat;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'payment_methods_section.dart';
 import 'wallet_page_model.dart';
 export 'wallet_page_model.dart';
 
@@ -209,7 +211,11 @@ class _WalletPageWidgetState extends State<WalletPageWidget> {
                 padding: const EdgeInsetsDirectional.fromSTEB(0.0, 40.0, 0.0, 40.0),
                 child: Builder(
                   builder: (context) {
-                    print(revenue_cat.offerings.toString());
+                    // RevenueCat не работает в браузере — там показываем
+                    // выбор способа оплаты через Stripe Checkout.
+                    if (kIsWeb) {
+                      return const PaymentMethodsSection();
+                    }
                     if (revenue_cat.offerings == null) {
                       return const Center(child: CircularProgressIndicator());
                     }

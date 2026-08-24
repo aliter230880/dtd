@@ -188,7 +188,16 @@ class _DealsMapModeWidgetState extends State<DealsMapModeWidget> {
         });
       }
     } else {
-      print('Не удалось найти маркер');
+      // Фейковый маркер или сделка не загружена — не показывать popup
+      debugPrint('Deal not found for marker: ${markerId.value}');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Заказ не найден'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     }
   }
 

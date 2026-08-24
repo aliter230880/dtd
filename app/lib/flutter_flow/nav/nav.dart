@@ -436,6 +436,11 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
               deal: params.getParam('deal', ParamType.Document),
             ),
           ),
+          FFRoute(
+            name: 'CarrierVerificationPage',
+            path: '/carrierVerificationPage',
+            builder: (context, params) => const CarrierVerificationPageWidget(),
+          ),
           // ignore: unnecessary_to_list_in_spreads
         ].map((r) => r.toRoute(appStateNotifier)).toList(),
       ],

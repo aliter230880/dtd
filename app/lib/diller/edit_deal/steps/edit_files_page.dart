@@ -188,7 +188,8 @@ class _EditDealFilesPageState extends State<EditDealFilesPage> {
                                           setState(() {
                                             loadingIndex = -1;
                                           });
-                                        } else {
+                                        }
+                                      } else {
                                         if (loadingIndex != -1) return;
                                         final data = {
                                           "files": FieldValue.arrayRemove([filesItem])

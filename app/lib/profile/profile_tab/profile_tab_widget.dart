@@ -235,6 +235,24 @@ class _ProfileTabWidgetState extends State<ProfileTabWidget> {
                                   ),
                                 ),
                               ),
+                              Padding(
+                                padding: const EdgeInsetsDirectional.fromSTEB(0.0, 4.0, 0.0, 0.0),
+                                child: AuthUserStreamWidget(
+                                  builder: (context) => Text(
+                                    currentUserDocument?.type == UserType.Diller
+                                        ? 'Дилер'
+                                        : 'Перевозчик',
+                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                          fontFamily: 'Inter',
+                                          fontSize: 14.0,
+                                          letterSpacing: 0.0,
+                                          color: FlutterFlowTheme.of(context).secondaryText,
+                                          fontWeight: FontWeight.w500,
+                                          useGoogleFonts: false,
+                                        ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -257,6 +275,81 @@ class _ProfileTabWidgetState extends State<ProfileTabWidget> {
                     ],
                   ),
                 ),
+                // КУС-верификация — только для перевозчиков
+                if (currentUserDocument?.type == UserType.Carrier)
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 24.0),
+                    child: InkWell(
+                      splashColor: Colors.transparent,
+                      focusColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onTap: () async {
+                        context.pushNamed('CarrierVerificationPage');
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: FlutterFlowTheme.of(context).secondaryBackground,
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(
+                            color: FlutterFlowTheme.of(context).primary,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Icon(
+                                (currentUserDocument?.verificationStatus ?? '') == 'verified'
+                                    ? Icons.verified_user
+                                    : Icons.gpp_maybe_outlined,
+                                color: FlutterFlowTheme.of(context).primary,
+                                size: 24.0,
+                              ),
+                              const SizedBox(width: 12.0),
+                              Expanded(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Верификация перевозчика',
+                                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                            fontFamily: 'Inter',
+                                            fontSize: 16.0,
+                                            letterSpacing: 0.0,
+                                            fontWeight: FontWeight.w600,
+                                            useGoogleFonts: false,
+                                          ),
+                                    ),
+                                    const SizedBox(height: 4.0),
+                                    Text(
+                                      (currentUserDocument?.verificationStatus ?? '') == 'verified'
+                                          ? 'Проверен'
+                                          : 'Подтвердите DOT / MC номер',
+                                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                                            fontFamily: 'Inter',
+                                            letterSpacing: 0.0,
+                                            useGoogleFonts: false,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: FlutterFlowTheme.of(context).primaryText,
+                                size: 16.0,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
                   child: Column(

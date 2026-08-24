@@ -52,3 +52,5 @@ export '/pages/deal_detail_diller/deal_detail_diller_widget.dart'
     show DealDetailDillerWidget;
 export '/pages/deal_detail_carrier/deal_detail_carrier_widget.dart'
     show DealDetailCarrierWidget;
+export '/pages/carrier_verification_page/carrier_verification_page_widget.dart'
+    show CarrierVerificationPageWidget;
