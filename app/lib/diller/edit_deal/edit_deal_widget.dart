@@ -2,6 +2,8 @@ import 'package:auto_deal_app/diller/create_deal_page/create_deal_page_widget.da
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../../auth/firebase_auth/auth_util.dart';
+import '../../backend/firebase_storage/storage.dart';
 import '../../flutter_flow/upload_data.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -259,7 +261,13 @@ class _EditDealWidgetState extends State<EditDealWidget> {
                                               setState(() {
                                                 loadingIndex = photosIndex;
                                               });
-                                              final String? url = await uploadToDBPath(selectedMedia.first.filePath!);
+                                              final selected = selectedMedia.first;
+                                              final path = getStoragePath(
+                                                currentUserUid,
+                                                'deal_photo_${DateTime.now().millisecondsSinceEpoch}.jpg',
+                                                false,
+                                              );
+                                              final String? url = await uploadData(path, selected.bytes);
                                               if (url != null) {
                                                 final data = {
                                                   "car_photos": FieldValue.arrayUnion([url])

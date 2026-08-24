@@ -1,3 +1,5 @@
+import '/auth/firebase_auth/auth_util.dart';
+import '/backend/firebase_storage/storage.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -191,12 +193,20 @@ class _CreateDeal7CompWidgetState extends State<CreateDeal7CompWidget> {
                               if (filesItem == '') {
                                 final selectedFiles = await selectFiles(multiFile: false);
 
-                                final String? path = selectedFiles?.first.filePath;
-
-                                if (path != null) {
-                                  setState(() {
-                                    FFAppState().updateCreatDealFilesAtIndex(filesIndex, (_) => path);
-                                  });
+                                if (selectedFiles != null && selectedFiles.isNotEmpty) {
+                                  final selected = selectedFiles.first;
+                                  // Загружаем в Storage сразу при выборе
+                                  final path = getStoragePath(
+                                    currentUserUid,
+                                    'deal_file_${DateTime.now().millisecondsSinceEpoch}_$filesIndex.pdf',
+                                    false,
+                                  );
+                                  final String? url = await uploadData(path, selected.bytes);
+                                  if (url != null) {
+                                    setState(() {
+                                      FFAppState().updateCreatDealFilesAtIndex(filesIndex, (_) => url);
+                                    });
+                                  }
                                 }
                               } else {
                                 setState(() {

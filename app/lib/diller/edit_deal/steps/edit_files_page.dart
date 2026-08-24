@@ -1,5 +1,7 @@
 import 'package:auto_deal_app/backend/backend.dart';
 
+import 'package:auto_deal_app/auth/firebase_auth/auth_util.dart';
+import 'package:auto_deal_app/backend/firebase_storage/storage.dart';
 import 'package:auto_deal_app/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:auto_deal_app/flutter_flow/flutter_flow_widgets.dart';
 import 'package:auto_deal_app/flutter_flow/upload_data.dart';
@@ -164,30 +166,29 @@ class _EditDealFilesPageState extends State<EditDealFilesPage> {
                                       if (filesItem == null) {
                                         final selectedFiles = await selectFiles(multiFile: false);
 
-                                        final String? path = selectedFiles?.first.filePath;
-
-                                        if (path != null) {
+                                        if (selectedFiles != null && selectedFiles.isNotEmpty) {
                                           setState(() {
-                                            FFAppState().updateCreatDealFilesAtIndex(filesIndex, (_) => path);
+                                            loadingIndex = filesIndex;
                                           });
-                                        }
-                                        setState(() {
-                                          loadingIndex = filesIndex;
-                                          print(loadingIndex);
-                                        });
-                                        final String? url = await uploadToDBPath(path!);
-                                        if (url != null) {
-                                          final data = {
-                                            "files": FieldValue.arrayUnion([url])
-                                          };
+                                          final selected = selectedFiles.first;
+                                          final path = getStoragePath(
+                                            currentUserUid,
+                                            'deal_file_${DateTime.now().millisecondsSinceEpoch}.pdf',
+                                            false,
+                                          );
+                                          final String? url = await uploadData(path, selected.bytes);
+                                          if (url != null) {
+                                            final data = {
+                                              "files": FieldValue.arrayUnion([url])
+                                            };
 
-                                          await widget.deal?.reference.update(data);
-                                        }
+                                            await widget.deal?.reference.update(data);
+                                          }
 
-                                        setState(() {
-                                          loadingIndex = -1;
-                                        });
-                                      } else {
+                                          setState(() {
+                                            loadingIndex = -1;
+                                          });
+                                        } else {
                                         if (loadingIndex != -1) return;
                                         final data = {
                                           "files": FieldValue.arrayRemove([filesItem])

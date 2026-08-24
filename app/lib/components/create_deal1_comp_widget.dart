@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import '/auth/firebase_auth/auth_util.dart';
+import '/backend/firebase_storage/storage.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -220,10 +222,19 @@ class _CreateDeal1CompWidgetState extends State<CreateDeal1CompWidget> {
                                   allowPhoto: true,
                                   includeDimensions: true,
                                 );
-                                if (selectedMedia != null) {
-                                  FFAppState().updateCreateDealCarPhotosAtIndex(
-                                      photosIndex, (_) => selectedMedia.first.filePath!);
-                                  setState(() {});
+                                if (selectedMedia != null && selectedMedia.isNotEmpty) {
+                                  final selected = selectedMedia.first;
+                                  // Загружаем в Storage сразу при выборе
+                                  final path = getStoragePath(
+                                    currentUserUid,
+                                    'deal_photo_${DateTime.now().millisecondsSinceEpoch}_$photosIndex.jpg',
+                                    false,
+                                  );
+                                  final String? url = await uploadData(path, selected.bytes);
+                                  if (url != null) {
+                                    FFAppState().updateCreateDealCarPhotosAtIndex(photosIndex, (_) => url);
+                                    setState(() {});
+                                  }
                                 }
                               },
                               child: Container(
@@ -245,12 +256,19 @@ class _CreateDeal1CompWidgetState extends State<CreateDeal1CompWidget> {
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  child: Image.file(
-                                    File(photosItem),
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
+                                  child: photosItem.startsWith('http')
+                                      ? Image.network(
+                                          photosItem,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Image.file(
+                                          File(photosItem),
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          fit: BoxFit.cover,
+                                        ),
                                 ),
                                 Align(
                                   alignment: const AlignmentDirectional(1.0, -1.0),

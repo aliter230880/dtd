@@ -82,61 +82,66 @@ class _CreateDealPageWidgetState extends State<CreateDealPageWidget> {
   }
 
   Future<void> onCreateDeal() async {
-    final int freeDealCount = currentUserDocument?.freeDealCount ?? 0;
-    final price = int.parse(FFAppState().createDealPrice);
+    try {
+      final int freeDealCount = currentUserDocument?.freeDealCount ?? 0;
+      final price = int.parse(FFAppState().createDealPrice);
 
-    final List<String> carPhotos = FFAppState().createDealCarPhotos.where((p) => p.isNotEmpty).toList();
+      // Фильтруем непустые значения — теперь это уже URL из Storage (загружены при выборе)
+      final List<String> carPhotosUrl = FFAppState().createDealCarPhotos.where((p) => p.isNotEmpty).toList();
+      final List<String> carFilesUrl = FFAppState().creatDealFiles.where((p) => p.isNotEmpty).toList();
 
-    final carPhotosUrl = (await Future.wait(carPhotos.map((m) async => await uploadToDBPath(m))));
+      final dealsRecordData = {
+        ...createDealsRecordData(
+          carName: FFAppState().createDealCarName.trim(),
+          description: FFAppState().createDealDescription.isEmpty ? null : FFAppState().createDealDescription.trim(),
+          locationAddress: FFAppState().createDealAddress,
+          location: FFAppState().createDealGeo,
+          auction: FFAppState().createDealAuction,
+          dealDate: FFAppState().createDealDate,
+          price: price,
+          payType: FFAppState().createDealPayType,
+          owner: currentUserReference,
+          ownerRate: currentUserDocument?.rate ?? 0,
+          status: DealStatus.InSearch,
+        ),
+        "car_photos": carPhotosUrl,
+        "files": carFilesUrl,
+        "responses": [],
+        "created_time": FieldValue.serverTimestamp(),
+        "insurance_required": FFAppState().createDealInsuranceRequired,
+      };
 
-    final List<String> carFiles = FFAppState().creatDealFiles.where((p) => p.isNotEmpty).toList();
+      final dealsRecord = DealsRecord.collection.doc();
+      await dealsRecord.set(dealsRecordData);
 
-    final carFilesUrl = (await Future.wait(carFiles.map((m) async => await uploadToDBPath(m))));
+      await _balanceAction(dealsRecord);
 
-    final dealsRecordData = {
-      ...createDealsRecordData(
-        carName: FFAppState().createDealCarName.trim(),
-        description: FFAppState().createDealDescription.isEmpty ? null : FFAppState().createDealDescription.trim(),
-        locationAddress: FFAppState().createDealAddress,
-        location: FFAppState().createDealGeo,
-        auction: FFAppState().createDealAuction,
-        dealDate: FFAppState().createDealDate,
-        price: price,
-        payType: FFAppState().createDealPayType,
-        owner: currentUserReference,
-        ownerRate: currentUserDocument?.rate ?? 0,
-        status: DealStatus.InSearch,
-      ),
-      "car_photos": carPhotosUrl,
-      "files": carFilesUrl,
-      "responses": [],
-      "created_time": FieldValue.serverTimestamp(),
-      "insurance_required": FFAppState().createDealInsuranceRequired,
-    };
+      await showDialog(
+        context: context,
+        builder: (dialogContext) {
+          return Dialog(
+            elevation: 0,
+            insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+            backgroundColor: Colors.transparent,
+            alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
+            child: SuccessCreatedealCustomAlertWidget(
+              isDiller: true,
+              isFreePublication: freeDealCount != 0,
+            ),
+          );
+        },
+      );
 
-    final dealsRecord = DealsRecord.collection.doc();
-    await dealsRecord.set(dealsRecordData);
-
-    await _balanceAction(dealsRecord);
-
-    await showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return Dialog(
-          elevation: 0,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-          backgroundColor: Colors.transparent,
-          alignment: const AlignmentDirectional(0.0, 0.0).resolve(Directionality.of(context)),
-          child: SuccessCreatedealCustomAlertWidget(
-            isDiller: true,
-            isFreePublication: freeDealCount != 0,
-          ),
+      if (mounted) {
+        context.pop();
+      }
+    } catch (e) {
+      debugPrint('Error creating deal: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ошибка публикации: ${e.toString()}')),
         );
-      },
-    );
-
-    if (mounted) {
-      context.pop();
+      }
     }
   }
 
