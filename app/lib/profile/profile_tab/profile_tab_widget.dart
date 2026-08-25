@@ -62,6 +62,9 @@ class _ProfileTabWidgetState extends State<ProfileTabWidget> {
       GoRouter.of(context).prepareAuthEvent();
       await authManager.signOut();
       GoRouter.of(context).clearRedirectLocation();
+      
+      // Clear cached user document to prevent stale data
+      currentUserDocument = null;
 
       context.goNamedAuth('login_page', context.mounted);
     }
