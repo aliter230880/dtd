@@ -639,6 +639,7 @@ class _FillProfileCarrierWidgetState extends State<FillProfileCarrierWidget> {
                                 carrierCompanyName: _model.companyNameTextController.text,
                                 carrierNumber: _model.carrierNumberTextController.text,
                                 carrierDriverLicense: _model.driverNumberTextController.text,
+                                freeResponseCount: 5,
                                 file: _model.uploadedFileUrl,
                               ));
                             }

@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 
 import '/auth/firebase_auth/auth_util.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -531,6 +533,52 @@ class _EditCarrierProfile1WidgetState extends State<EditCarrierProfile1Widget> {
                         ),
                       ],
                     ),
+                  ),
+                ),
+                FFButtonWidget(
+                  onPressed: () async {
+                    if (_model.formKey.currentState == null || !_model.formKey.currentState!.validate()) {
+                      return;
+                    }
+                    await currentUserReference!.update(createUsersRecordData(
+                      carrierCompanyName: _model.companyNameTextController.text,
+                      carrierNumber: _model.carrierNumberTextController.text,
+                      carrierDriverLicense: _model.driverNumberTextController.text,
+                    ));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          '?????? ?????????',
+                          style: TextStyle(
+                            color: FlutterFlowTheme.of(context).primaryText,
+                          ),
+                        ),
+                        duration: const Duration(milliseconds: 2000),
+                        backgroundColor: FlutterFlowTheme.of(context).secondary,
+                      ),
+                    );
+                    context.pop();
+                  },
+                  text: '?????????',
+                  options: FFButtonOptions(
+                    width: double.infinity,
+                    height: 56.0,
+                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                    iconPadding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                    color: FlutterFlowTheme.of(context).primary,
+                    textStyle: FlutterFlowTheme.of(context).titleSmall.override(
+                          fontFamily: 'Inter',
+                          color: FlutterFlowTheme.of(context).primaryText,
+                          letterSpacing: 0.0,
+                          fontWeight: FontWeight.w600,
+                          useGoogleFonts: false,
+                        ),
+                    elevation: 0.0,
+                    borderSide: const BorderSide(
+                      color: Colors.transparent,
+                      width: 1.0,
+                    ),
+                    borderRadius: BorderRadius.circular(30.0),
                   ),
                 ),
               ],
