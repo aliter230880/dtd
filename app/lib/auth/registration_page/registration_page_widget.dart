@@ -564,6 +564,7 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                         child: FFButtonWidget(
                           onPressed: () async {
                             GoRouter.of(context).prepareAuthEvent();
+                            try {
                             final user = await authManager.signInWithGoogle(context);
                             if (user == null) {
                               return;
@@ -589,6 +590,14 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                               context.goNamedAuth('fill_profile_main', context.mounted);
 
                               return;
+                            }
+                            } catch (e) {
+                              print('Reg Google error: $e');
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Error: \$\{e.toString()\}')));
+                                }
                             }
                           },
                           text: FFLocalizations.of(context).getText(
@@ -621,6 +630,7 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                         child: FFButtonWidget(
                           onPressed: () async {
                             GoRouter.of(context).prepareAuthEvent();
+                            try {
                             final user = await authManager.signInWithFacebook(context);
                             if (user == null) {
                               return;
@@ -646,6 +656,14 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                               context.goNamedAuth('fill_profile_main', context.mounted);
 
                               return;
+                            }
+                            } catch (e) {
+                              print('Reg Facebook error: $e');
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Error: \$\{e.toString()\}')));
+                                }
                             }
                           },
                           text: FFLocalizations.of(context).getText(
@@ -675,6 +693,7 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                       FFButtonWidget(
                         onPressed: () async {
                           GoRouter.of(context).prepareAuthEvent();
+                          try {
                           final user = await authManager.signInWithApple(context);
                           if (user == null) {
                             return;
@@ -700,6 +719,14 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                             context.goNamedAuth('fill_profile_main', context.mounted);
 
                             return;
+                          }
+                          } catch (e) {
+                            print('Reg Apple error: $e');
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Error: \$\{e.toString()\}')));
+                              }
                           }
                         },
                         text: FFLocalizations.of(context).getText(

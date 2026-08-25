@@ -33,7 +33,8 @@ void logFirebaseEvent(String eventName, {Map<String?, dynamic>? parameters}) {
 }
 
 void logFirebaseAuthEvent(User? user, String method) {
-  final isSignup = user!.metadata.creationTime == user.metadata.lastSignInTime;
+  if (user == null) return;
+  final isSignup = user.metadata.creationTime == user.metadata.lastSignInTime;
   final authEvent = isSignup ? 'sign_up' : 'login';
   logFirebaseEvent(authEvent, parameters: {'method': method});
 }

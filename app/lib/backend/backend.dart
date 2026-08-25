@@ -466,13 +466,22 @@ Future maybeCreateUser(User user) async {
     return;
   }
 
-  final configRef = FirebaseFirestore.instance.collection('config').doc('configs');
-  final configDoc = await configRef.get();
-  final configData = configDoc.data() as Map<String, dynamic>;
-  final bool hasAutomaticAccruals = configData['automatic_accrual'] ?? false;
-  final int balance = !hasAutomaticAccruals ? 0 : configData['automatic_accrual_value'] ?? 0;
-  final int freePublications = configData['initial_free_publications'] ?? 0;
-  final int freeResponses = configData['initial_free_responses'] ?? 0;
+  int freePublications = 0;
+  int freeResponses = 5;
+  double balance = 0.0;
+  try {
+    final configRef = FirebaseFirestore.instance.collection('config').doc('configs');
+    final configDoc = await configRef.get();
+    final configData = configDoc.data();
+    if (configData != null && configData is Map<String, dynamic>) {
+      final hasAutomaticAccruals = configData['automatic_accrual'] ?? false;
+      balance = !hasAutomaticAccruals ? 0.0 : (configData['automatic_accrual_value'] ?? 0).toDouble();
+      freePublications = configData['initial_free_publications'] ?? 0;
+      freeResponses = configData['initial_free_responses'] ?? 5;
+    }
+  } catch (e) {
+    print('Config read failed, using defaults: $e');
+  }
   
 
   final userData = createUsersRecordData(
@@ -488,7 +497,12 @@ Future maybeCreateUser(User user) async {
     banned: false,
   );
 
-  await userRecord.set(userData);
+  try {
+    await userRecord.set(userData);
+  } catch (e) {
+    print('Failed to create user doc: $e');
+    rethrow;
+  }
   currentUserDocument = UsersRecord.getDocumentFromData(userData, userRecord);
 }
 

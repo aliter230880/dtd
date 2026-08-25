@@ -65,6 +65,7 @@ class _ProfileTabWidgetState extends State<ProfileTabWidget> {
       
       // Clear cached user document to prevent stale data
       currentUserDocument = null;
+                          FFAppState().isAnonymEnter = false;
 
       context.goNamedAuth('login_page', context.mounted);
     }

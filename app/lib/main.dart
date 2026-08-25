@@ -204,6 +204,8 @@ class _NavBarPageState extends State<NavBarPage> {
         if (mounted) clearAndNavigate(context, 'login_page');
       }
 
+                    return;
+
       final isBlocked = user!.banned;
 
       if (isBlocked) {

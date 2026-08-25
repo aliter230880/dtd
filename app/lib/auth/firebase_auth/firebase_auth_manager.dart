@@ -284,22 +284,36 @@ class FirebaseAuthManager extends AuthManager
   ) async {
     try {
       final userCredential = await signInFunc();
-      logFirebaseAuthEvent(userCredential?.user, authProvider);
       if (userCredential?.user != null) {
-        await maybeCreateUser(userCredential!.user!);
+        logFirebaseAuthEvent(userCredential!.user, authProvider);
+        await maybeCreateUser(userCredential.user!);
       }
       return userCredential == null ? null : AutoDealAppFirebaseUser.fromUserCredential(userCredential);
     } on FirebaseAuthException catch (e) {
       log(e.toString());
       final errorMsg = switch (e.code) {
-        'email-already-in-use' => 'Error: The email is already in use by a different account',
-        'INVALID_LOGIN_CREDENTIALS' => 'Error: The supplied auth credential is incorrect, malformed or has expired',
-        _ => 'Error: ${e.message!}',
+        'email-already-in-use' => 'The email is already in use by a different account',
+        'INVALID_LOGIN_CREDENTIALS' => 'Incorrect email or password',
+        'user-not-found' => 'No account found with this email',
+        'wrong-password' => 'Incorrect password',
+        'weak-password' => 'Password is too weak (min 6 characters)',
+        _ => e.message ?? e.code,
       };
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMsg)),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $errorMsg')),
+        );
+      }
+      return null;
+    } catch (e) {
+      log('Auth unexpected error: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
       return null;
     }
   }

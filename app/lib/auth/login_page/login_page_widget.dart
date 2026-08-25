@@ -341,6 +341,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                     return;
                                   }
                                   GoRouter.of(context).prepareAuthEvent();
+                                  try {
 
                                   final user = await authManager.signInWithEmail(
                                     context,
@@ -373,6 +374,14 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                     context.goNamedAuth('fill_profile_main', context.mounted);
 
                                     return;
+                                  }
+                                  } catch (e) {
+                                    print('Email login error: $e');
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Error: \$\{e.toString()\}')));
+                                      }
                                   }
                                 },
                           text: FFLocalizations.of(context).getText(
@@ -459,7 +468,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                 }
                                 if (valueOrDefault<bool>(currentUserDocument?.profileFilled, false) == true) {
                                      FFAppState().isAnonymEnter = false;
-                                  context.pushNamedAuth('HomePage', context.mounted);
+                                  context.goNamedAuth('HomePage', context.mounted);
 
                                   return;
                                 } else {
@@ -525,7 +534,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                           padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 12.0),
                           child: FFButtonWidget(
                             onPressed: () async {
-                              // GoRouter.of(context).prepareAuthEvent();
+                              GoRouter.of(context).prepareAuthEvent();
                               try {
                                 final user = await authManager.signInWithFacebook(context);
                                 if (user == null) {
@@ -597,6 +606,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                         FFButtonWidget(
                           onPressed: () async {
                             GoRouter.of(context).prepareAuthEvent();
+                            try {
                             final user = await authManager.signInWithApple(context);
                             if (user == null) {
                               return;
@@ -623,6 +633,14 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                               context.goNamedAuth('fill_profile_main', context.mounted);
 
                               return;
+                            }
+                            } catch (e) {
+                              print('Apple login error: $e');
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Error: \$\{e.toString()\}')));
+                                }
                             }
                           },
                           text: FFLocalizations.of(context).getText(
