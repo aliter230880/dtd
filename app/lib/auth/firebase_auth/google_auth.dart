@@ -1,29 +1,26 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-
-final _googleSignIn = GoogleSignIn();
 
 Future<UserCredential?> googleSignInFunc() async {
   if (kIsWeb) {
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithPopup(GoogleAuthProvider());
+    GoogleAuthProvider googleProvider = GoogleAuthProvider();
+    return await FirebaseAuth.instance.signInWithPopup(googleProvider);
   }
 
+  // Mobile: use signInWithProvider (opens browser, no google_sign_in dependency)
+  GoogleAuthProvider googleProvider = GoogleAuthProvider();
+  googleProvider.addScope('email');
+  googleProvider.addScope('profile');
+  
   try {
-    await signOutWithGoogle().catchError((_) => null);
-    final googleUser = await _googleSignIn.signIn();
-    if (googleUser == null) {
-      return null; // User cancelled
-    }
-    final auth = await googleUser.authentication;
-    final credential = GoogleAuthProvider.credential(
-        idToken: auth.idToken, accessToken: auth.accessToken);
-    return FirebaseAuth.instance.signInWithCredential(credential);
+    return await FirebaseAuth.instance.signInWithProvider(googleProvider);
   } catch (e) {
     print('Google sign-in error: $e');
     rethrow;
   }
 }
 
-Future signOutWithGoogle() => _googleSignIn.signOut();
+Future signOutWithGoogle() async {
+  // No google_sign_in to sign out from, just Firebase
+  await FirebaseAuth.instance.signOut();
+}
