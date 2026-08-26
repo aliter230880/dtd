@@ -10,14 +10,20 @@ Future<UserCredential?> googleSignInFunc() async {
     return await FirebaseAuth.instance.signInWithPopup(GoogleAuthProvider());
   }
 
-  await signOutWithGoogle().catchError((_) => null);
-  final auth = await (await _googleSignIn.signIn())?.authentication;
-  if (auth == null) {
-    return null;
+  try {
+    await signOutWithGoogle().catchError((_) => null);
+    final googleUser = await _googleSignIn.signIn();
+    if (googleUser == null) {
+      return null; // User cancelled
+    }
+    final auth = await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+        idToken: auth.idToken, accessToken: auth.accessToken);
+    return FirebaseAuth.instance.signInWithCredential(credential);
+  } catch (e) {
+    print('Google sign-in error: $e');
+    rethrow;
   }
-  final credential = GoogleAuthProvider.credential(
-      idToken: auth.idToken, accessToken: auth.accessToken);
-  return FirebaseAuth.instance.signInWithCredential(credential);
 }
 
 Future signOutWithGoogle() => _googleSignIn.signOut();

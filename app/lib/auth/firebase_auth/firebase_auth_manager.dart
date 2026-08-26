@@ -302,7 +302,10 @@ class FirebaseAuthManager extends AuthManager
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $errorMsg')),
+          SnackBar(
+              content: Text('Error: $errorMsg'),
+              duration: const Duration(seconds: 8),
+            ),
         );
       }
       return null;
@@ -311,7 +314,10 @@ class FirebaseAuthManager extends AuthManager
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}')),
+          SnackBar(
+              content: Text('Auth error: ${e.toString()}'),
+              duration: const Duration(seconds: 8),
+            ),
         );
       }
       return null;

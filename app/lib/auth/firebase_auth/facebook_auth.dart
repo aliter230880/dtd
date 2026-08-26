@@ -16,18 +16,23 @@ Future<UserCredential?> facebookSignIn() async {
   }
 
   // Trigger the sign-in flow
-  final LoginResult loginToken = await FacebookAuth.instance.login();
-  print(loginToken.message);
-  print(loginToken.status);
-  final AccessToken? result = loginToken.accessToken;
-  print('FB : $result');
+  try {
+    final LoginResult loginToken = await FacebookAuth.instance.login();
+    print(loginToken.message);
+    print(loginToken.status);
+    final AccessToken? result = loginToken.accessToken;
+    print('FB : $result');
 
-  if(result == null) {
-    return null;
+    if (result == null) {
+      return null;
+    }
+    // Create a credential from the access token
+    final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(result.token);
+
+    // Once signed in, return the UserCredential
+    return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+  } catch (e) {
+    print('Facebook sign-in error: $e');
+    rethrow;
   }
-  // Create a credential from the access token
-  final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(result.token);
-
-  // Once signed in, return the UserCredential
-  return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
 }

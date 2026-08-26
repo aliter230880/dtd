@@ -501,7 +501,7 @@ Future maybeCreateUser(User user) async {
     await userRecord.set(userData);
   } catch (e) {
     print('Failed to create user doc: $e');
-    rethrow;
+    // User doc creation failed, but auth succeeded — allow login
   }
   currentUserDocument = UsersRecord.getDocumentFromData(userData, userRecord);
 }
