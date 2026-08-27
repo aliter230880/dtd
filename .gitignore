@@ -11,6 +11,7 @@ dist/
 **/.flutter-plugins-dependencies
 **/generated_plugin_registrant.dart
 **/packaged_compile_time_sdk_stamp
+**/ios/Flutter/ephemeral/
 
 # Node (admin/firebase/functions)
 **/node_modules/
@@ -39,3 +40,7 @@ crashlytics-build.log
 *.jpg
 *.png.bak
 .kiro/
+
+# Python
+**/__pycache__/
+*.pyc
