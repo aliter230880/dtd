@@ -1,228 +1,175 @@
-﻿# DTD (Dealer-to-Dealer) — Quick Start Handoff
+# DTD (Dealer-to-Dealer) — Quick Start
 
-**Дата:** 23 мая 2026  
-**Статус:** MVP готов → переход к production-ready
+**Обновлено:** 27 августа 2026  
+**Версия приложения:** 1.0.0+7  
+**Полная документация:** [ARCHITECTURE.md](ARCHITECTURE.md) — архитектура, схема данных, текущая точка, планы.
 
 ---
 
 ## Что это
 
-**DTD USA Inc.** — маркетплейс доставки автомобилей между дилерами и перевозчиками (патент подан).  
-**Целевой рынок:** 170k+ дилеров, 700k+ перевозчиков в США.
+**DTD USA Inc.** — маркетплейс доставки автомобилей между дилерами и перевозчиками
+(патент pending). Flutter + Firebase, монорепо из трёх приложений.
 
-**Репозиторий:**  
-- Локально: \E:\\AI\\AI_folder\\dtd\
-- GitHub: https://github.com/aliter230880/dtd
-- Firebase: \dealertodealer-84957\
-
----
-
-## Быстрый старт
-
-### 1. Клонирование и setup
-
-\\\ash
-git clone https://github.com/aliter230880/dtd.git
-cd dtd/app
-flutter pub get
-\\\
-
-### 2. Сборка
-
-\\\ash
-# Android APK (debug)
-flutter build apk --debug
-
-# Android AAB (release, требуется keystore)
-flutter build appbundle --release
-
-# Web
-cd ../app
-flutter build web --release
-
-# iOS (требуется macOS)
-flutter build ios --release --no-codesign
-\\\
-
-### 3. Firebase setup
-
-**Если нет доступа к Firebase Console:**
-- \google-services.json\ для Android уже в \pp/android/app/\
-- \GoogleService-Info.plist\ для iOS уже в \pp/ios/Runner/\
-- Web-конфигурация в \lib/backend/firebase/firebase_config.dart\
-
-**Если есть доступ:**
-- Console: https://console.firebase.google.com/project/dealertodealer-84957
-- Правила: \dmin/firebase/firestore.rules\, \storage.rules\
-- Деплой rules: \cd admin/firebase && firebase deploy --only firestore:rules,storage\
+| Ресурс | Где |
+|---|---|
+| Локально | `E:\AI\AI_folder\dtd` |
+| GitHub | https://github.com/aliter230880/dtd |
+| Firebase | `dealertodealer-84957` |
 
 ---
 
-## Структура проекта
+## Структура монорепо
 
-\\\
+```
 dtd/
-├── app/                    # Мобильное приложение (Android/iOS/Web)
+├── app/                  # Приложение (Android / iOS / Web) — основная кодовая база
 │   ├── lib/
-│   │   ├── backend/schema/ # Firestore модели (DealsRecord, UsersRecord и т.д.)
-│   │   ├── pages/          # Экраны (*_widget.dart + *_model.dart)
-│   │   └── flutter_flow/   # Служебный код FlutterFlow
-│   └── android/app/
-│       └── build.gradle    # package: com.sprestay.autodealapp
-├── web/                    # Веб-версия (почти идентична app/)
-├── admin/                  # Админ-панель + Cloud Functions
-│   └── firebase/
-│       ├── firestore.rules
-│       ├── storage.rules
-│       └── functions/      # Node.js Cloud Functions
-├── docs/
-│   └── ARCHITECTURE.md     # 📖 ПОЛНАЯ ДОКУМЕНТАЦИЯ (читай это!)
-└── README.md
-\\\
+│   │   ├── backend/      # Firestore-модели, Storage, Functions-клиент
+│   │   ├── pages/        # Экраны (*_widget.dart + *_model.dart, паттерн FlutterFlow)
+│   │   ├── custom_code/  # Геокодирование и прочий ручной код
+│   │   └── flutter_flow/ # Служебный рантайм FlutterFlow
+│   └── android/          # dtd.jks + key.properties — ТОЛЬКО локально, в git не попадают
+├── web/                  # Отдельная копия веб-версии (дублирует app/)
+├── admin/                # Админ-панель
+│   └── firebase/         # Cloud Functions (TypeScript: insurance, kyc, payments)
+│                         # + firestore.rules, storage.rules
+├── docs/                 # Документация
+├── .github/workflows/    # iOS-сборка на GitHub Actions
+├── сборки/               # Артефакты для тестирования (в git не попадают)
+└── _archives/            # Исходные zip, история (в git не попадают)
+```
+
+⚠️ **Важно:** `app/` и `web/` — почти идентичные копии. Правки делаются в `app/`;
+дублирование в `web/` — известный технический долг (см. ARCHITECTURE.md).
+
+⚠️ **FlutterFlow-проекта-генератора нет.** Код правится руками; при перегенерации
+из FlutterFlow все ручные правки будут затёрты.
 
 ---
 
-## Что работает (MVP)
+## Окружение сборки (эта машина)
 
-✅ Регистрация/авторизация (Google, Apple, Facebook, Email)  
-✅ Две роли: Diller (дилер) и Carrier (перевозчик)  
-✅ Жизненный цикл сделки: InSearch → InConfirm → InActive → Completed  
-✅ Аукцион со ставками перевозчиков  
-✅ Чат между дилером и перевозчиком  
-✅ Споры (Disputes) → админ разбирает  
-✅ Отзывы (5 звёзд + комментарий)  
-✅ Жалобы (Complains) → админ может забанить  
-✅ Геолокация (Google Maps, Mapbox Search)  
-✅ Push-уведомления (FCM)  
-✅ Подписки (RevenueCat)  
-✅ Админ-панель (жалобы, аналитика, бан)  
+Всё установлено на `E:\AI\AI_folder\tools` — диск C не используется:
 
----
+- Flutter 3.19.6 (`tools/flutter`), JDK 17 (`tools/jdk-…`), Gradle 7.5
+- Pub-кеш: `tools/pub-cache`, Gradle home: `tools/gradle-home`
+- Зеркала pub/Flutter (региональные) прописаны в `env.sh`
 
-## Критические проблемы (читай перед работой!)
+Перед любой сборкой в новом шелле:
 
-🔴 **Финансовая логика на клиенте** — начисление заработка, списание откликов происходит из приложения → легко взломать.  
-🔴 **Firestore Rules открытые** — любой может прочитать все сделки.  
-🔴 **Производительность** — все сделки грузятся целиком, фильтры на клиенте → при 1000+ сделок упадёт.  
-🟡 **Дублирование кода** — app/web/admin дублируют схему.  
-🟡 **Нет тестов** — только заглушки.  
-🟡 **Нет мониторинга** — Crashlytics не подключён.
+```bash
+source /e/AI/AI_folder/tools/env.sh
+```
 
-**Подробности → \docs/ARCHITECTURE.md\**
+`env.sh` задаёт `PUB_CACHE`, `GRADLE_USER_HOME`, зеркала и `$FLUTTER_BIN`.
+Android SDK — стандартный, в `%LOCALAPPDATA%\Android\Sdk` (платформа 34
+установлена). Подпись release-APK — ключом `app/android/dtd.jks`
+(`key.properties` рядом; пароль в файле).
 
 ---
 
-## Приоритет заказчика (делаем СЕЙЧАС)
+## Сборка
 
-### 1. Страхование перегона авто
-- Интеграция со страховой компанией (API или реферальная ссылка)
-- Чекбокс "Требуется страховка" при создании сделки
-- Покупка полиса внутри приложения
-- Новые поля в \deals\: \insurance_required\, \insurance_policy_id\, \insurance_cost\
+### Android APK (release, подписанный)
 
-### 2. Автопроверка/автозаполнение партнёров (KYC)
-- Интеграция с FMCSA API (проверка DOT/MC номеров для США)
-- Автозаполнение: company_legal_name, address, safety_rating
-- Бейдж "Verified" в профиле
-- Блокировка функций для неверифицированных
-- Новые поля в \users\: \erified\, \dot_number\, \mc_number\, \company_legal_name\
+```bash
+source /e/AI/AI_folder/tools/env.sh
+cd /e/AI/AI_folder/dtd/app
+"$FLUTTER_BIN" build apk --release
+```
 
----
+Артефакт: `app/build/app/outputs/flutter-apk/app-release.apk` (~34 МБ).
+Копия для тестов: `сборки/dtd-android.apk`. Первая сборка ~10–15 мин
+(загрузка зависимостей), повторные 2–3 мин (web — около 1 мин).
 
-## План доработок (после приоритета заказчика)
+Для Google Play: `flutter build appbundle --release` (перед публикацией —
+новый keystore, текущий скомпрометирован, см. ARCHITECTURE.md).
 
-**Фаза 1 (критично, 3–5 дней):** Security  
-- Cloud Functions для всех операций с деньгами
-- Ужесточение Firestore rules
-- Firebase App Check
+### Web
 
-**Фаза 2 (неделя):** Scale  
-- Геопоиск через geohash
-- Пагинация списков
-- Индексы для фильтров
+```bash
+"$FLUTTER_BIN" build web --release
+# артефакт app/build/web/
+```
 
-**Фаза 3 (2–3 недели):** Business Features  
-- Ваучеры, реферальная программа
-- Escrow платежей (Stripe Connect)
-- AI Price Suggestions (как у Central Dispatch)
+Локальный просмотр (Flutter Web требует HTTP-сервер, file:// не работает):
 
-**Подробности → \docs/ARCHITECTURE.md\, раздел "План доработок"**
+```bash
+cd /e/AI/AI_folder/dtd/сборки/web && python -m http.server 8080
+# → http://localhost:8080
+```
 
----
+### iOS (без macOS)
 
-## Схема данных (Firestore)
-
-### Коллекция \users\
-
-\\\
-email, display_name, photo_url, uid
-type: Enum (Diller, Carrier)
-balance: double
-carrier_total_earning: double
-free_deal_count: int, free_response_count: int
-rate: double, rate_count: int
-carrier_company_name, carrier_number (MC/DOT)
-diller_license, diller_driver_license
-banned: bool
-\\\
-
-### Коллекция \deals\
-
-\\\
-car_name, car_number, car_photos, description
-location: GeoPoint, location_address
-price: int
-status: Enum (InSearch, InConfirm, InActive, InDispute, Completed, Canceled)
-owner: ref users/{uid}  (дилер)
-carrier: ref users/{uid}  (перевозчик)
-responses: Array<ResponseStruct>  (отклики + ставки)
-auction: ref auctions/{id}
-review_by_diller, review_by_carrier
-\\\
-
-**Полная схема → \docs/ARCHITECTURE.md\, раздел "Схема данных"**
+Собирается в облаке GitHub Actions: репозиторий → вкладка Actions →
+«iOS build» → Run workflow. Артефакт `ios-unsigned-app` (Runner.app без подписи).
+Для установки на устройства/TestFlight нужен Apple Developer Program ($99/год) —
+блок подписи закомментирован в `.github/workflows/ios-build.yml`.
 
 ---
 
-## Полезные команды
+## Cloud Functions
 
-\\\ash
-# Анализ кода
-flutter analyze
-
-# Запуск тестов (пока пустые)
-flutter test
-
-# Сборка для всех платформ
-flutter build apk && flutter build web && flutter build ios
-
-# Деплой Firebase rules
-cd admin/firebase
-firebase deploy --only firestore:rules,storage
-
-# Деплой Cloud Functions
+```bash
 cd admin/firebase/functions
-npm run deploy
-\\\
+./node_modules/.bin/tsc --project tsconfig.json   # компиляция TS → lib/
+```
+
+Деплой (нужен доступ к Firebase):
+
+```bash
+firebase functions:config:set \
+  stripe.secret_key="sk_..." \
+  stripe.webhook_secret="whsec_..." \
+  stripe.success_url="https://<домен>/walletPage" \
+  stripe.cancel_url="https://<домен>/walletPage"
+firebase deploy --only functions
+```
+
+Затем в дашборде Stripe — вебхук на `checkout.session.completed` с URL
+функции `stripeWebhook`. **Пока ключи не заданы и функции не задеплоены,
+оплата возвращает «Stripe не сконфигурирован».**
+
+Правила безопасности: `firebase deploy --only firestore:rules,storage`
+(из `admin/firebase/`).
 
 ---
 
-## Контакты и ресурсы
+## Проверка APK на «новизну» (по содержимому)
+
+```bash
+unzip -o -q сборки/dtd-android.apk -d /tmp/apkchk
+grep -a -c createCheckoutSession /tmp/apkchk/lib/arm64-v8a/libapp.so
+```
+
+Маркеры свежих правок: `createCheckoutSession`, `sepa_debit`, `klarna`,
+`carrier_verification_title`, `CarrierVerificationPage`. Кириллицу grep-ом
+в `libapp.so` искать бесполезно — Dart хранит строки в UTF-16.
+
+---
+
+## Что сейчас работает / не работает
+
+**Работает (проверено):** полный цикл сделки в вебе и Android; авторизация
+(email + соцвходы, включая вход после выхода); публикация с фото и файлами;
+геокодирование (адрес и карта); роль в профиле; страница КУС-верификации
+(mock: любой DOT проходит); чат, отзывы, споры; админ-панель.
+
+**Не работает / требует действий:**
+- Оплата — «Stripe не сконфигурирован» до деплоя функций и ключей
+  (действие владельца)
+- КУС-верификация и страховка — mock-провайдеры, реальных API нет
+- Google Maps API-ключ не ограничен по домену (действие владельца)
+
+**Критические риски до продакшна** — money-path на клиенте, открытые
+Firestore Rules: детали и порядок работ в [ARCHITECTURE.md](ARCHITECTURE.md),
+разделы «Текущая точка» и «План доработок».
+
+---
+
+## Контакты
 
 **GitHub:** https://github.com/aliter230880/dtd  
 **Firebase Console:** https://console.firebase.google.com/project/dealertodealer-84957  
-**Package ID:** \com.sprestay.autodealapp\  
-**Основатель:** Леонид Лифшиц  
-**Патент:** PATENT PENDING (28 октября 2025)
-
-**Конкурент (анализ):** [Central Dispatch](https://www.centraldispatch.com) — крупнейший load board США
-
----
-
-## Следующий шаг
-
-1. Прочитай \docs/ARCHITECTURE.md\ (полная картина)
-2. Проверь доступ к Firebase Console
-3. Начинай с приоритета заказчика (страхование + KYC)
-
-**Вопросы?** Пиши заказчику или проверяй \docs/ARCHITECTURE.md\ — там всё расписано.
+**Основатель:** Леонид Лифшиц, DTD USA Inc.
