@@ -1,4 +1,5 @@
 import '/flutter_flow/flutter_flow_util.dart';
+import '/custom_code/document_validators.dart';
 import 'fill_profile_carrier_widget.dart' show FillProfileCarrierWidget;
 import 'package:flutter/material.dart';
 
@@ -18,19 +19,13 @@ class FillProfileCarrierModel
   String? Function(BuildContext, String?)? companyNameTextControllerValidator;
   String? _companyNameTextControllerValidator(
       BuildContext context, String? val) {
-    if (val == null || val.isEmpty) {
+    if (val == null || val.trim().isEmpty) {
       return FFLocalizations.of(context).getText(
         'c782yqr5' /* Введите название компании */,
       );
     }
 
-    if (val.length < 3) {
-      return FFLocalizations.of(context).getText(
-        '893c4qb6' /* Минимум 3 символа */,
-      );
-    }
-
-    return null;
+    return DocumentValidators.companyName(val);
   }
 
   // State field(s) for carrierNumber widget.
@@ -39,19 +34,15 @@ class FillProfileCarrierModel
   String? Function(BuildContext, String?)? carrierNumberTextControllerValidator;
   String? _carrierNumberTextControllerValidator(
       BuildContext context, String? val) {
-    if (val == null || val.isEmpty) {
+    if (val == null || val.trim().isEmpty) {
       return FFLocalizations.of(context).getText(
         'u2zbq5gt' /* Введите номер перевозчика */,
       );
     }
 
-    if (val.length < 3) {
-      return FFLocalizations.of(context).getText(
-        'xjrxm5vo' /* Минимум 3 символа */,
-      );
-    }
-
-    return null;
+    // Проверка формата USDOT / MC вместо прежнего `length < 3`,
+    // при котором строка «abc» проходила как номер перевозчика.
+    return DocumentValidators.carrierNumber(val);
   }
 
   // State field(s) for driverNumber widget.
@@ -60,19 +51,13 @@ class FillProfileCarrierModel
   String? Function(BuildContext, String?)? driverNumberTextControllerValidator;
   String? _driverNumberTextControllerValidator(
       BuildContext context, String? val) {
-    if (val == null || val.isEmpty) {
+    if (val == null || val.trim().isEmpty) {
       return FFLocalizations.of(context).getText(
         'l60f1e35' /* Введите номер водительских пра... */,
       );
     }
 
-    if (val.length < 3) {
-      return FFLocalizations.of(context).getText(
-        'zqr7knos' /* Минимум 3 символа */,
-      );
-    }
-
-    return null;
+    return DocumentValidators.driverLicense(val);
   }
 
   bool isDataUploading = false;

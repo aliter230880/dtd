@@ -581,7 +581,11 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
     "qvpxvw24": {"ru": "Введите номер водительских прав", "en": "Enter Driver's License Number"},
     "rwn4l28z": {"ru": "Минимум 3 символа", "en": "Minimum 3 characters"},
     "c6wssbi3": {"ru": "Please choose an option from the dropdown", "en": "Please choose an option from the dropdown"},
-    "b8fcbmey": {"ru": "Home", "en": "Home"}
+    "b8fcbmey": {"ru": "Home", "en": "Home"},
+    // Восстановлено: в экспорте FlutterFlow строки потерялись и превратились
+    // в '?????????' / '?????? ?????????' — кириллица не выжила кодировку.
+    "ecp1save": {"ru": "Сохранить", "en": "Save"},
+    "ecp1saved": {"ru": "Данные сохранены", "en": "Data saved"}
   },
   // UserBannedPage
   {

@@ -1,4 +1,5 @@
 import '/flutter_flow/flutter_flow_util.dart';
+import '/custom_code/document_validators.dart';
 import 'edit_carrier_profile1_widget.dart' show EditCarrierProfile1Widget;
 import 'package:flutter/material.dart';
 
@@ -20,13 +21,7 @@ class EditCarrierProfile1Model
       );
     }
 
-    if (val.length < 3) {
-      return FFLocalizations.of(context).getText(
-        'xjrxm5vo' /* Минимум 3 символа */,
-      );
-    }
-
-    return null;
+    return DocumentValidators.companyName(val);
   }
 
   // State field(s) for carrierNumber widget.
@@ -41,13 +36,7 @@ class EditCarrierProfile1Model
       );
     }
 
-    if (val.length < 3) {
-      return FFLocalizations.of(context).getText(
-        '88g95i67' /* Минимум 3 символа */,
-      );
-    }
-
-    return null;
+    return DocumentValidators.carrierNumber(val);
   }
 
   // State field(s) for driverNumber widget.
@@ -62,13 +51,7 @@ class EditCarrierProfile1Model
       );
     }
 
-    if (val.length < 3) {
-      return FFLocalizations.of(context).getText(
-        'rwn4l28z' /* Минимум 3 символа */,
-      );
-    }
-
-    return null;
+    return DocumentValidators.driverLicense(val);
   }
 
   @override
