@@ -14,6 +14,24 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'login_page_model.dart';
 export 'login_page_model.dart';
 
+
+// Force reload currentUserDocument with timeout (fixes hanging after social sign-in)
+Future<void> reloadUserDocument({Duration timeout = const Duration(seconds: 3)}) async {
+  try {
+    if (currentUserReference == null) return;
+    final docFuture = UsersRecord.getDocumentOnce(currentUserReference!);
+    currentUserDocument = await docFuture.timeout(
+      timeout,
+      onTimeout: () {
+        print('User doc load timeout ? will redirect to profile fill');
+        return currentUserDocument!; // Use cached if exists
+      },
+    );
+  } catch (e) {
+    print('Failed to reload user doc: $e');
+  }
+}
+
 class LoginPageWidget extends StatefulWidget {
   const LoginPageWidget({super.key});
 
@@ -466,7 +484,8 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                 if (user == null) {
                                   return;
                                 }
-                                if (valueOrDefault<bool>(currentUserDocument?.profileFilled, false) == true) {
+                                await reloadUserDocument();
+                            if (valueOrDefault<bool>(currentUserDocument?.profileFilled, false) == true) {
                                      FFAppState().isAnonymEnter = false;
                                   context.goNamedAuth('HomePage', context.mounted);
 
@@ -540,6 +559,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                 if (user == null) {
                                   return;
                                 }
+                                await reloadUserDocument();
                                 if (valueOrDefault<bool>(currentUserDocument?.profileFilled, false) == true) {
                                      FFAppState().isAnonymEnter = false;
                                   context.goNamedAuth('HomePage', context.mounted);
@@ -611,7 +631,8 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                             if (user == null) {
                               return;
                             }
-                            if (valueOrDefault<bool>(currentUserDocument?.profileFilled, false) == true) {
+                            await reloadUserDocument();
+                                if (valueOrDefault<bool>(currentUserDocument?.profileFilled, false) == true) {
                                  FFAppState().isAnonymEnter = false;
                               context.goNamedAuth('HomePage', context.mounted);
 
