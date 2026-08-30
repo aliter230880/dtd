@@ -22,3 +22,17 @@ const { createCheckoutSession } = require("./lib/payments/createCheckoutSession"
 const { stripeWebhook } = require("./lib/payments/stripeWebhook");
 exports.createCheckoutSession = createCheckoutSession;
 exports.stripeWebhook = stripeWebhook;
+
+// Verification Cloud Functions (28.08): FMCSA DOT, VIN vPIC, dealer license moderation
+const {
+  verifyCarrierDot,
+  decodeVin,
+  submitDealerLicense,
+  reviewVerification,
+  checkDotVerificationExpiry,
+} = require("./lib/verification");
+exports.verifyCarrierDot = verifyCarrierDot;
+exports.decodeVin = decodeVin;
+exports.submitDealerLicense = submitDealerLicense;
+exports.reviewVerification = reviewVerification;
+exports.checkDotVerificationExpiry = checkDotVerificationExpiry;

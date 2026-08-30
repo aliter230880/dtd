@@ -30,8 +30,32 @@ service cloud.firestore {
     match /users/{document} {
       allow create: if true;
       allow read: if true;
-      allow write: if false;
+      // Владелец может обновлять свой профиль, но НЕ доверенные поля:
+      // verification/balance/carrier_total_earning/free_response_count/type
+      // пишутся только Cloud Functions (verification.ts, stripeWebhook).
+      allow update: if request.auth != null
+        && request.auth.uid == document
+        && !request.resource.data.diff(resource.data).affectedKeys()
+             .hasAny(['verification', 'balance', 'carrier_total_earning',
+                      'free_response_count', 'type']);
       allow delete: if false;
+    }
+
+    // Аудит-лог верификаций: только чтение админом, запись — сервером.
+    match /audit_logs/{document} {
+      allow read: if request.auth != null && request.auth.token.admin == true;
+      allow write: if false;
+    }
+
+    // Очередь ручной модерации документов.
+    match /verification_queue/{document} {
+      allow read: if request.auth != null && request.auth.token.admin == true;
+      allow write: if false;
+    }
+
+    // Счётчики rate limit — только сервер.
+    match /rate_limits/{document} {
+      allow read, write: if false;
     }
 
     match /deals/{document} {
