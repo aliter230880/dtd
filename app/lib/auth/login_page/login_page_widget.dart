@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '/auth/firebase_auth/auth_util.dart';
+import '/backend/schema/users_record.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -19,14 +20,16 @@ export 'login_page_model.dart';
 Future<void> reloadUserDocument({Duration timeout = const Duration(seconds: 3)}) async {
   try {
     if (currentUserReference == null) return;
-    final docFuture = UsersRecord.getDocumentOnce(currentUserReference!);
-    currentUserDocument = await docFuture.timeout(
-      timeout,
-      onTimeout: () {
-        print('User doc load timeout ? will redirect to profile fill');
-        return currentUserDocument!; // Use cached if exists
-      },
-    );
+    final cached = currentUserDocument;
+    currentUserDocument = await UsersRecord.getDocumentOnce(currentUserReference!)
+        .then<UsersRecord?>((doc) => doc)
+        .timeout(
+          timeout,
+          onTimeout: () {
+            print('User doc load timeout — will use cached doc if present');
+            return cached;
+          },
+        );
   } catch (e) {
     print('Failed to reload user doc: $e');
   }
