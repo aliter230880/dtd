@@ -1,7 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter_svg/flutter_svg.dart';
-
+import '/auth/auth_error_snackbar.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/schema/users_record.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -397,12 +395,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                     return;
                                   }
                                   } catch (e) {
-                                    print('Email login error: $e');
-                                    if (context.mounted) {
-                                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text('Error: \$\{e.toString()\}')));
-                                      }
+                                    showAuthError(context, e, 'Email');
                                   }
                                 },
                           text: FFLocalizations.of(context).getText(
@@ -512,19 +505,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                   return;
                                 }
                               } catch (e) {
-                                log('Google login error: $e');
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      FFLocalizations.of(context).getText('error'),
-                                      style: TextStyle(
-                                        color: FlutterFlowTheme.of(context).primaryText,
-                                      ),
-                                    ),
-                                    duration: const Duration(milliseconds: 4000),
-                                    backgroundColor: FlutterFlowTheme.of(context).secondary,
-                                  ),
-                                );
+                                showAuthError(context, e, 'Google');
                               }
                             },
                             text: FFLocalizations.of(context).getText(
@@ -587,19 +568,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                   return;
                                 }
                               } catch (e) {
-                                log('Facebook login error: $e');
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      FFLocalizations.of(context).getText('error'),
-                                      style: TextStyle(
-                                        color: FlutterFlowTheme.of(context).primaryText,
-                                      ),
-                                    ),
-                                    duration: const Duration(milliseconds: 4000),
-                                    backgroundColor: FlutterFlowTheme.of(context).secondary,
-                                  ),
-                                );
+                                showAuthError(context, e, 'Facebook');
                               }
                             },
                             text: FFLocalizations.of(context).getText(
@@ -659,12 +628,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                               return;
                             }
                             } catch (e) {
-                              print('Apple login error: $e');
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error: \$\{e.toString()\}')));
-                                }
+                              showAuthError(context, e, 'Apple');
                             }
                           },
                           text: FFLocalizations.of(context).getText(

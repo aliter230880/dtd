@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '/auth/auth_error_snackbar.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -592,12 +593,7 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                               return;
                             }
                             } catch (e) {
-                              print('Reg Google error: $e');
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error: \$\{e.toString()\}')));
-                                }
+                              showAuthError(context, e, 'Google');
                             }
                           },
                           text: FFLocalizations.of(context).getText(
@@ -658,12 +654,7 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                               return;
                             }
                             } catch (e) {
-                              print('Reg Facebook error: $e');
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error: \$\{e.toString()\}')));
-                                }
+                              showAuthError(context, e, 'Facebook');
                             }
                           },
                           text: FFLocalizations.of(context).getText(
@@ -721,12 +712,7 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                             return;
                           }
                           } catch (e) {
-                            print('Reg Apple error: $e');
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Error: \$\{e.toString()\}')));
-                              }
+                            showAuthError(context, e, 'Apple');
                           }
                         },
                         text: FFLocalizations.of(context).getText(

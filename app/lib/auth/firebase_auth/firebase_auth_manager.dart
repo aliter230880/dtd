@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../auth_manager.dart';
+import '../auth_error_snackbar.dart';
 import '../../flutter_flow/flutter_flow_util.dart';
 
 import '/backend/backend.dart';
@@ -290,36 +290,10 @@ class FirebaseAuthManager extends AuthManager
       }
       return userCredential == null ? null : AutoDealAppFirebaseUser.fromUserCredential(userCredential);
     } on FirebaseAuthException catch (e) {
-      log(e.toString());
-      final errorMsg = switch (e.code) {
-        'email-already-in-use' => 'The email is already in use by a different account',
-        'INVALID_LOGIN_CREDENTIALS' => 'Incorrect email or password',
-        'user-not-found' => 'No account found with this email',
-        'wrong-password' => 'Incorrect password',
-        'weak-password' => 'Password is too weak (min 6 characters)',
-        _ => e.message ?? e.code,
-      };
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Error: $errorMsg'),
-              duration: const Duration(seconds: 8),
-            ),
-        );
-      }
+      showAuthError(context, e, authProvider);
       return null;
     } catch (e) {
-      log('Auth unexpected error: $e');
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Auth error: ${e.toString()}'),
-              duration: const Duration(seconds: 8),
-            ),
-        );
-      }
+      showAuthError(context, e, authProvider);
       return null;
     }
   }
