@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 /// Web client ID (oauth_client type 3 из google-services.json).
@@ -12,14 +13,39 @@ final GoogleSignIn _googleSignIn = GoogleSignIn(
   scopes: const ['email', 'profile'],
 );
 
+const MethodChannel _cryptoChannel = MethodChannel('dtd/firebase_auth_crypto');
+
+/// Признак повреждённого keyset: Android Keystore на устройстве
+/// инвалидировал мастер-ключ Tink, и браузерный flow не может стартовать.
+bool _isBrokenKeysetError(Object error) {
+  final text = error.toString();
+  return text.contains('encryption key for Generic IDP') ||
+      text.contains('Generic IDP');
+}
+
+Future<void> _resetGenericIdpKeyset() async {
+  try {
+    await _cryptoChannel.invokeMethod('resetGenericIdpKeyset');
+  } catch (e) {
+    print('resetGenericIdpKeyset failed: $e');
+  }
+}
+
+Future<UserCredential?> _webFlowGoogleSignIn() {
+  final googleProvider = GoogleAuthProvider()
+    ..addScope('email')
+    ..addScope('profile');
+  return FirebaseAuth.instance.signInWithProvider(googleProvider);
+}
+
 Future<UserCredential?> googleSignInFunc() async {
   if (kIsWeb) {
     final googleProvider = GoogleAuthProvider();
     return FirebaseAuth.instance.signInWithPopup(googleProvider);
   }
 
-  // Основной путь: нативный Google Sign-In (нижняя шторка выбора аккаунта,
-  // без браузера и редиректа — не зависит от GenericIdpActivity/Custom Tab).
+  // Основной путь: нативный Google Sign-In (нижняя шторка выбора аккаунта).
+  Object? nativeError;
   try {
     final googleUser = await _googleSignIn.signIn();
     if (googleUser == null) {
@@ -31,16 +57,33 @@ Future<UserCredential?> googleSignInFunc() async {
       idToken: googleAuth.idToken,
       accessToken: googleAuth.accessToken,
     );
-    return FirebaseAuth.instance.signInWithCredential(credential);
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   } catch (e) {
-    print('google_sign_in native failed, falling back to web flow: $e');
+    nativeError = e;
+    print('google_sign_in native failed: $e');
   }
 
-  // Запасной путь: браузерный flow через /__/auth/handler.
-  final googleProvider = GoogleAuthProvider()
-    ..addScope('email')
-    ..addScope('profile');
-  return FirebaseAuth.instance.signInWithProvider(googleProvider);
+  // Запасной путь: браузерный flow. Перед ним чистим повреждённый
+  // keyset Firebase, если ошибка указывает на Generic IDP / keystore.
+  try {
+    return await _webFlowGoogleSignIn();
+  } catch (e) {
+    if (_isBrokenKeysetError(e)) {
+      print('Generic IDP keyset broken, resetting and retrying once');
+      await _resetGenericIdpKeyset();
+      try {
+        return await _webFlowGoogleSignIn();
+      } catch (retryError) {
+        throw Exception(
+          'Google: $retryError\nсброс ключей не помог; первичная ошибка: $nativeError',
+        );
+      }
+    }
+    // Иначе показываем обе ошибки — код нативного пути может объяснить всё.
+    throw Exception(
+      'Google fallback error: $e\nпервичная нативная ошибка: $nativeError',
+    );
+  }
 }
 
 Future signOutWithGoogle() async {

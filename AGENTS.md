@@ -94,4 +94,12 @@ print(d.count('вход отменён'.encode('utf-16-le')))
    Браузерный `signInWithProvider` оставлен запасным фолбэком.
    Исходная ошибка 12500 (из-за которой плагин убирали в v6) — про
    SHA-1/Google Play Services; SHA-1 `bfab152b…` с тех пор зарегистрирован.
+7. `1.0.0+11` — дефект устройства, не кода: `Failed to generate/retrieve
+   public encryption key for Generic IDP flow`. Firebase хранит Tink-keyset
+   в prefs `com.google.firebase.auth.api.crypto.[DEFAULT]`, мастер-ключ в
+   Android Keystore как `firebear_master_key_id.[DEFAULT]`. Keystore на
+   устройстве инвалидировал ключ (обновление ОС / смена блокировки).
+   Лечение: MainActivity.kt, MethodChannel `dtd/firebase_auth_crypto` →
+   `resetGenericIdpKeyset` (чистит prefs + удаляет alias); google_auth.dart
+   вызывает его при Generic IDP-ошибке и повторяет браузерный flow.
 

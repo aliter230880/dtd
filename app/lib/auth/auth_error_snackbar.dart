@@ -29,6 +29,12 @@ void showAuthError(BuildContext context, Object error, String provider) {
 }
 
 String _describe(Object error) {
+  final raw = error.toString();
+  if (raw.contains('Generic IDP')) {
+    // Сбой Tink-ключей Firebase на устройстве: приложение само очистит
+    // повреждённый keyset и повторит попытку (см. google_auth.dart).
+    return 'сбой ключевого хранилища устройства, вход уже повторяется [$raw]';
+  }
   if (error is FirebaseAuthException) {
     final human = switch (error.code) {
       'email-already-in-use' => 'этот email уже занят другим аккаунтом',
