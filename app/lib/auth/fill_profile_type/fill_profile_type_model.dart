@@ -9,6 +9,10 @@ class FillProfileTypeModel extends FlutterFlowModel<FillProfileTypeWidget> {
 
   UserType? type;
 
+  /// Путь верификации перевозчика: company | individual.
+  /// Роль остаётся в [type] — физлицо-перегонщик это тот же Carrier.
+  String? carrierKind;
+
   ///  State fields for stateful widgets in this page.
 
   final unfocusNode = FocusNode();

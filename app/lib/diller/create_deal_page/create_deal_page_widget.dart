@@ -93,6 +93,8 @@ class _CreateDealPageWidgetState extends State<CreateDealPageWidget> {
       final dealsRecordData = {
         ...createDealsRecordData(
           carName: FFAppState().createDealCarName.trim(),
+          carNumber:
+              FFAppState().createDealCarVin.isEmpty ? null : FFAppState().createDealCarVin,
           description: FFAppState().createDealDescription.isEmpty ? null : FFAppState().createDealDescription.trim(),
           locationAddress: FFAppState().createDealAddress,
           location: FFAppState().createDealGeo,

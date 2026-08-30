@@ -354,6 +354,18 @@ class _ProfileTabWidgetState extends State<ProfileTabWidget> {
                       ),
                     ),
                   ),
+                // Полная проверка документов: VIN, DOT/MC, лицензия дилера,
+                // KYC физлица. Доступна обеим ролям.
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 24.0),
+                  child: _documentsCard(context),
+                ),
+                if (currentUserDocument?.type == UserType.Carrier &&
+                    (currentUserDocument?.carrierKind ?? 'company') == 'individual')
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 24.0),
+                    child: _individualKycCard(context),
+                  ),
                 Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(24.0, 0.0, 24.0, 0.0),
                   child: Column(
@@ -498,6 +510,108 @@ class _ProfileTabWidgetState extends State<ProfileTabWidget> {
                 const SizedBox(height: 24),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Карточка «Проверка документов» — единый стиль с карточкой КУС ниже:
+  /// белый фон, жёлтая обводка primary, иконка слева, шеврон справа.
+  Widget _documentsCard(BuildContext context) => _navCard(
+        context,
+        icon: Icons.fact_check_outlined,
+        title: 'Проверка документов',
+        subtitle: 'VIN, USDOT/MC, лицензия дилера — автозаполнение из реестров',
+        routeName: 'VerificationPage',
+      );
+
+  /// Карточка KYC физлица — видна только перевозчику с carrier_kind=individual.
+  Widget _individualKycCard(BuildContext context) {
+    final identityDone = currentUserDocument?.identityVerified ?? false;
+    final insuranceDone = currentUserDocument?.insuranceVerified ?? false;
+    return _navCard(
+      context,
+      icon: identityDone && insuranceDone
+          ? Icons.how_to_reg_outlined
+          : Icons.badge_outlined,
+      title: 'Проверка частного лица',
+      subtitle: identityDone && insuranceDone
+          ? 'Личность и страховка подтверждены'
+          : 'Личность через Stripe Identity, полис — на модерацию',
+      routeName: 'IndividualKycPage',
+    );
+  }
+
+  Widget _navCard(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required String routeName,
+  }) {
+    return InkWell(
+      splashColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      onTap: () async {
+        context.pushNamed(routeName);
+      },
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: FlutterFlowTheme.of(context).secondaryBackground,
+          borderRadius: BorderRadius.circular(10.0),
+          border: Border.all(
+            color: FlutterFlowTheme.of(context).primary,
+            width: 1.5,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Icon(
+                icon,
+                color: FlutterFlowTheme.of(context).primary,
+                size: 24.0,
+              ),
+              const SizedBox(width: 12.0),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Inter',
+                            fontSize: 16.0,
+                            letterSpacing: 0.0,
+                            fontWeight: FontWeight.w600,
+                            useGoogleFonts: false,
+                          ),
+                    ),
+                    const SizedBox(height: 4.0),
+                    Text(
+                      subtitle,
+                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                            fontFamily: 'Inter',
+                            letterSpacing: 0.0,
+                            useGoogleFonts: false,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                color: FlutterFlowTheme.of(context).primaryText,
+                size: 16.0,
+              ),
+            ],
           ),
         ),
       ),

@@ -56,6 +56,14 @@ class FFAppState extends ChangeNotifier {
     _createDealCarName = value;
   }
 
+  /// VIN автомобиля в черновике сделки. Подтверждается в базе NHTSA vPIC,
+  /// оттуда же подставляются марка, модель и год в название.
+  String _createDealCarVin = '';
+  String get createDealCarVin => _createDealCarVin;
+  set createDealCarVin(String value) {
+    _createDealCarVin = value;
+  }
+
   String _editDealCarName = '';
   String get editDealCarName => _editDealCarName;
   set editDealCarName(String value) {
@@ -101,6 +109,7 @@ class FFAppState extends ChangeNotifier {
 
   void clearAll() {
     _createDealCarName = '';
+    _createDealCarVin = '';
     _createDealCarPhotos = ['', '', '', '', '', '', '', '', ''];
     _createDealDescription = '';
     _createDealAddress = '';

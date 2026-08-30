@@ -72,20 +72,60 @@ class _CarrierVerificationPageWidgetState
       });
 
       try {
-        // Call Cloud Function
-        final callable = FirebaseFunctions.instance.httpsCallable('verifyCarrier');
-        
-        final result = await callable.call({
-          'dotNumber': dotValue.isNotEmpty ? dotValue : null,
-          'mcNumber': mcValue.isNotEmpty ? mcValue : null,
-          'userId': currentUserUid,
-        });
+        // Call Cloud Function.
+        // Основной путь (28.08): verifyCarrierDot — реальная проверка в реестре
+        // FMCSA QCMobile (флаг verified пишется только сервером).
+        // Фолбэк: старый verifyCarrier, если новая функция ещё не задеплоена.
+        Map<String, dynamic> data;
+        try {
+          final callable =
+              FirebaseFunctions.instance.httpsCallable('verifyCarrierDot');
+          final result = await callable.call({
+            'dotNumber': dotValue.isNotEmpty ? dotValue : mcValue,
+          });
+          data = Map<String, dynamic>.from(result.data as Map);
+        } on FirebaseFunctionsException catch (e) {
+          if (e.code == 'not-found' || e.code == 'unimplemented') {
+            // Новая функция не задеплоена — используем прежний путь.
+            final legacy =
+                FirebaseFunctions.instance.httpsCallable('verifyCarrier');
+            await legacy.call({
+              'dotNumber': dotValue.isNotEmpty ? dotValue : null,
+              'mcNumber': mcValue.isNotEmpty ? mcValue : null,
+              'userId': currentUserUid,
+            });
+            data = {'status': 'verified'};
+          } else {
+            rethrow;
+          }
+        }
 
         if (!mounted) return;
 
         setState(() {
           _model.isLoading = false;
         });
+
+        final status = (data['status'] ?? '') as String;
+        if (status != 'verified') {
+          // Реестр ответил, но подтверждения нет — честно показываем причину.
+          final msgKey = switch (status) {
+            'not_found' => 'verification_not_found',
+            'mismatch' => 'verification_mismatch',
+            'unavailable' => 'verification_unavailable',
+            _ => 'verification_error',
+          };
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(FFLocalizations.of(context).getText(msgKey)),
+              backgroundColor: status == 'unavailable'
+                  ? FlutterFlowTheme.of(context).warning
+                  : FlutterFlowTheme.of(context).error,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+          return;
+        }
 
         // Success
         ScaffoldMessenger.of(context).showSnackBar(

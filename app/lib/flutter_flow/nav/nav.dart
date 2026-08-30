@@ -17,6 +17,8 @@ import 'package:auto_deal_app/diller/edit_deal/steps/edit_price_page.dart';
 import 'package:auto_deal_app/pages/deal_detail_diller/deal_documents_widget.dart';
 import 'package:auto_deal_app/pages/deal_detail_diller/deal_responses_widget.dart';
 import 'package:auto_deal_app/pages/deal_detail_diller/deal_user_profile_widget.dart';
+import 'package:auto_deal_app/verification/screens/individual_kyc_screen.dart';
+import 'package:auto_deal_app/verification/screens/verification_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -440,6 +442,16 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
             name: 'CarrierVerificationPage',
             path: '/carrierVerificationPage',
             builder: (context, params) => const CarrierVerificationPageWidget(),
+          ),
+          FFRoute(
+            name: 'VerificationPage',
+            path: '/verificationPage',
+            builder: (context, params) => const VerificationScreen(),
+          ),
+          FFRoute(
+            name: 'IndividualKycPage',
+            path: '/individualKycPage',
+            builder: (context, params) => const IndividualKycScreen(standalone: true),
           ),
           // ignore: unnecessary_to_list_in_spreads
         ].map((r) => r.toRoute(appStateNotifier)).toList(),

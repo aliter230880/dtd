@@ -9,6 +9,11 @@ class CreateDeal1CompModel extends FlutterFlowModel<CreateDeal1CompWidget> {
   FocusNode? carNameFocusNode;
   TextEditingController? carNameTextController;
   String? Function(BuildContext, String?)? carNameTextControllerValidator;
+
+  // State field(s) for VIN widget.
+  FocusNode? vinFocusNode;
+  TextEditingController? vinTextController;
+
   bool isDataUploading = false;
   FFUploadedFile uploadedLocalFile =
       FFUploadedFile(bytes: Uint8List.fromList([]));
@@ -20,5 +25,7 @@ class CreateDeal1CompModel extends FlutterFlowModel<CreateDeal1CompWidget> {
   void dispose() {
     carNameFocusNode?.dispose();
     carNameTextController?.dispose();
+    vinFocusNode?.dispose();
+    vinTextController?.dispose();
   }
 }

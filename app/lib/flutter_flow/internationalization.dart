@@ -1302,6 +1302,18 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
     "validation_error": {
       "ru": "Проверьте введённые номера",
       "en": "Check the entered numbers",
+    },
+    "verification_not_found": {
+      "ru": "Номер не найден в реестре FMCSA",
+      "en": "Number not found in the FMCSA registry",
+    },
+    "verification_mismatch": {
+      "ru": "Авторитет FMCSA отозван или недействителен",
+      "en": "FMCSA authority is revoked or inactive",
+    },
+    "verification_unavailable": {
+      "ru": "Реестр временно недоступен, попробуйте позже",
+      "en": "Registry is temporarily unavailable, try again later",
     }
   },
   // Miscellaneous

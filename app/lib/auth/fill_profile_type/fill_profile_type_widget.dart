@@ -90,10 +90,10 @@ class _FillProfileTypeWidgetState extends State<FillProfileTypeWidget> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Expanded(
-                  child: Padding(
+                  child: SingleChildScrollView(
                     padding: const EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
                     child: Column(
-                      mainAxisSize: MainAxisSize.max,
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Padding(
@@ -135,17 +135,60 @@ class _FillProfileTypeWidgetState extends State<FillProfileTypeWidget> {
                             ),
                           ),
                         ),
+                        // Второй шаг для перевозчика: путь верификации.
+                        // Роль (UserType) при этом не меняется.
+                        if (_model.type == UserType.Carrier)
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 12.0),
+                                  child: Text(
+                                    'Как вы работаете?',
+                                    style: FlutterFlowTheme.of(context).titleMedium.override(
+                                          fontFamily: 'Inter',
+                                          color: FlutterFlowTheme.of(context).primaryText,
+                                          letterSpacing: 0.0,
+                                          useGoogleFonts: false,
+                                        ),
+                                  ),
+                                ),
+                                _carrierKindTile(
+                                  value: 'company',
+                                  title: 'Компания',
+                                  subtitle: 'Есть USDOT или MC — проверка по реестру FMCSA',
+                                  icon: Icons.local_shipping_outlined,
+                                ),
+                                const SizedBox(height: 10.0),
+                                _carrierKindTile(
+                                  value: 'individual',
+                                  title: 'Частное лицо',
+                                  subtitle: 'Проверка личности и полиса, без авторитета FMCSA',
+                                  icon: Icons.person_outline_rounded,
+                                ),
+                              ],
+                            ),
+                          ),
                       ],
                     ),
                   ),
                 ),
                 FFButtonWidget(
-                  onPressed: (_model.type == null)
+                  onPressed: (_model.type == null ||
+                          (_model.type == UserType.Carrier && _model.carrierKind == null))
                       ? null
                       : () async {
                           if (_model.type != null) {
                             await currentUserReference!.update(createUsersRecordData(
                               type: _model.type,
+                              carrierKind:
+                                  _model.type == UserType.Carrier ? _model.carrierKind : null,
+                              verificationMethod: _model.type == UserType.Carrier
+                                  ? (_model.carrierKind == 'individual' ? 'identity' : 'fmcsa')
+                                  : null,
                             ));
                             if (_model.type == UserType.Diller) {
                               context.pushNamed('fill_profile_diller');
@@ -237,6 +280,89 @@ class _FillProfileTypeWidgetState extends State<FillProfileTypeWidget> {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Плитка выбора пути верификации. Стиль повторяет карточки роли выше:
+  /// жёлтая обводка и заливка primary у выбранной, серая обводка у остальных.
+  Widget _carrierKindTile({
+    required String value,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+  }) {
+    final selected = _model.carrierKind == value;
+    return InkWell(
+      splashColor: Colors.transparent,
+      focusColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      onTap: () async {
+        _model.carrierKind = value;
+        setState(() {});
+      },
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: selected
+              ? FlutterFlowTheme.of(context).primary
+              : FlutterFlowTheme.of(context).secondaryBackground,
+          borderRadius: BorderRadius.circular(16.0),
+          border: Border.all(
+            color: selected
+                ? FlutterFlowTheme.of(context).primary
+                : FlutterFlowTheme.of(context).buttonDisabel,
+            width: 1.5,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(14.0),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: FlutterFlowTheme.of(context).primaryText,
+                size: 24.0,
+              ),
+              const SizedBox(width: 12.0),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Inter',
+                            fontSize: 16.0,
+                            letterSpacing: 0.0,
+                            fontWeight: FontWeight.w600,
+                            useGoogleFonts: false,
+                          ),
+                    ),
+                    const SizedBox(height: 3.0),
+                    Text(
+                      subtitle,
+                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                            fontFamily: 'Inter',
+                            letterSpacing: 0.0,
+                            useGoogleFonts: false,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                selected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                color: selected
+                    ? FlutterFlowTheme.of(context).primaryText
+                    : FlutterFlowTheme.of(context).hintColor,
+                size: 22.0,
+              ),
+            ],
           ),
         ),
       ),

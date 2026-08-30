@@ -212,6 +212,27 @@ class UsersRecord extends FirestoreRecord {
   String get verificationAdminId => _verificationAdminId ?? '';
   bool hasVerificationAdminId() => _verificationAdminId != null;
 
+  // "carrier_kind" field: company | individual.
+  // Роль на маркетплейсе остаётся в `type`, здесь только путь верификации.
+  String? _carrierKind;
+  String get carrierKind => _carrierKind ?? 'company';
+  bool hasCarrierKind() => _carrierKind != null;
+
+  // "verification_method" field: fmcsa | identity.
+  String? _verificationMethod;
+  String get verificationMethod => _verificationMethod ?? '';
+  bool hasVerificationMethod() => _verificationMethod != null;
+
+  // "identity_verified" field. Stripe Identity, пишется вебхуком.
+  bool? _identityVerified;
+  bool get identityVerified => _identityVerified ?? false;
+  bool hasIdentityVerified() => _identityVerified != null;
+
+  // "insurance_verified" field. Полис физлица, ручная модерация.
+  bool? _insuranceVerified;
+  bool get insuranceVerified => _insuranceVerified ?? false;
+  bool hasInsuranceVerified() => _insuranceVerified != null;
+
   void _initializeFields() {
     _email = snapshotData['email'] as String?;
     _displayName = snapshotData['display_name'] as String?;
@@ -253,6 +274,10 @@ class UsersRecord extends FirestoreRecord {
     _verificationDocumentUrls = getDataList(snapshotData['verification_document_urls']);
     _verificationRequestDate = snapshotData['verification_request_date'] as DateTime?;
     _verificationAdminId = snapshotData['verification_admin_id'] as String?;
+    _carrierKind = snapshotData['carrier_kind'] as String?;
+    _verificationMethod = snapshotData['verification_method'] as String?;
+    _identityVerified = snapshotData['identity_verified'] as bool?;
+    _insuranceVerified = snapshotData['insurance_verified'] as bool?;
   }
 
   static CollectionReference get collection => FirebaseFirestore.instance.collection('users');
@@ -323,6 +348,10 @@ Map<String, dynamic> createUsersRecordData({
   String? verificationRejectionReason,
   DateTime? verificationRequestDate,
   String? verificationAdminId,
+  String? carrierKind,
+  String? verificationMethod,
+  bool? identityVerified,
+  bool? insuranceVerified,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -364,6 +393,10 @@ Map<String, dynamic> createUsersRecordData({
       'verification_rejection_reason': verificationRejectionReason,
       'verification_request_date': verificationRequestDate,
       'verification_admin_id': verificationAdminId,
+      'carrier_kind': carrierKind,
+      'verification_method': verificationMethod,
+      'identity_verified': identityVerified,
+      'insurance_verified': insuranceVerified,
     }.withoutNulls,
   );
 
@@ -411,7 +444,11 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e1?.verificationRejectionReason == e2?.verificationRejectionReason &&
         listEquality.equals(e1?.verificationDocumentUrls, e2?.verificationDocumentUrls) &&
         e1?.verificationRequestDate == e2?.verificationRequestDate &&
-        e1?.verificationAdminId == e2?.verificationAdminId;
+        e1?.verificationAdminId == e2?.verificationAdminId &&
+        e1?.carrierKind == e2?.carrierKind &&
+        e1?.verificationMethod == e2?.verificationMethod &&
+        e1?.identityVerified == e2?.identityVerified &&
+        e1?.insuranceVerified == e2?.insuranceVerified;
   }
 
   @override
