@@ -11,6 +11,7 @@ dist/
 **/.flutter-plugins-dependencies
 **/generated_plugin_registrant.dart
 **/packaged_compile_time_sdk_stamp
+**/ios/Flutter/ephemeral/
 
 # Node (admin/firebase/functions)
 **/node_modules/
@@ -40,6 +41,6 @@ crashlytics-build.log
 *.png.bak
 .kiro/
 
-# Прототип верификации от 28.08 — самостоятельный git-репозиторий,
-# исходники уже перенесены в app/lib/verification/
-доработки 28,08/
+# Python
+**/__pycache__/
+*.pyc

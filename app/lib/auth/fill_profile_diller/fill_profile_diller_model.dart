@@ -1,4 +1,5 @@
 import '/flutter_flow/flutter_flow_util.dart';
+import '/custom_code/document_validators.dart';
 import 'fill_profile_diller_widget.dart' show FillProfileDillerWidget;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ class FillProfileDillerModel extends FlutterFlowModel<FillProfileDillerWidget> {
       );
     }
 
-    return null;
+    return DocumentValidators.dealerLicense(val);
   }
 
   // State field(s) for driverNumber widget.
@@ -39,7 +40,7 @@ class FillProfileDillerModel extends FlutterFlowModel<FillProfileDillerWidget> {
       );
     }
 
-    return null;
+    return DocumentValidators.driverLicense(val);
   }
 
   // State field(s) for takeDate widget.

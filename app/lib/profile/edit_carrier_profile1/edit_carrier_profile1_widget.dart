@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/backend/backend.dart';
+import '/custom_code/document_validators.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -376,15 +377,15 @@ class _EditCarrierProfile1WidgetState extends State<EditCarrierProfile1Widget> {
                                         required isFocused,
                                         maxLength}) =>
                                     null,
-                                keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.text,
                                 cursorColor:
                                     FlutterFlowTheme.of(context).primary,
                                 validator: _model
                                     .carrierNumberTextControllerValidator
                                     .asValidator(context),
                                 inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp('[0-9]'))
+                                  documentNumberFilter,
+                                  ...documentNumberFormatters,
                                 ],
                               ),
                             ),
@@ -517,15 +518,15 @@ class _EditCarrierProfile1WidgetState extends State<EditCarrierProfile1Widget> {
                                         required isFocused,
                                         maxLength}) =>
                                     null,
-                                keyboardType: TextInputType.number,
+                                keyboardType: TextInputType.text,
                                 cursorColor:
                                     FlutterFlowTheme.of(context).primary,
                                 validator: _model
                                     .driverNumberTextControllerValidator
                                     .asValidator(context),
                                 inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp('[0-9]'))
+                                  documentNumberFilter,
+                                      ...documentNumberFormatters
                                 ],
                               ),
                             ),
@@ -548,7 +549,9 @@ class _EditCarrierProfile1WidgetState extends State<EditCarrierProfile1Widget> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          '?????? ?????????',
+                          FFLocalizations.of(context).getText(
+                            'ecp1saved' /* Данные сохранены */,
+                          ),
                           style: TextStyle(
                             color: FlutterFlowTheme.of(context).primaryText,
                           ),
@@ -559,7 +562,9 @@ class _EditCarrierProfile1WidgetState extends State<EditCarrierProfile1Widget> {
                     );
                     context.pop();
                   },
-                  text: '?????????',
+                  text: FFLocalizations.of(context).getText(
+                    'ecp1save' /* Сохранить */,
+                  ),
                   options: FFButtonOptions(
                     width: double.infinity,
                     height: 56.0,

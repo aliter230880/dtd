@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/custom_code/document_validators.dart';
 import '/backend/firebase_storage/storage.dart';
 import '/components/success_signup_custom_alert_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -315,10 +316,11 @@ class _FillProfileCarrierWidgetState extends State<FillProfileCarrierWidget> {
                                     maxLengthEnforcement: MaxLengthEnforcement.enforced,
                                     buildCounter: (context, {required currentLength, required isFocused, maxLength}) =>
                                         null,
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.text,
+                                    textCapitalization: TextCapitalization.characters,
                                     cursorColor: FlutterFlowTheme.of(context).primary,
                                     validator: _model.carrierNumberTextControllerValidator.asValidator(context),
-                                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[0-9]'))],
+                                    inputFormatters: [documentNumberFilter, ...documentNumberFormatters],
                                   ),
                                 ),
                               ),
@@ -411,10 +413,18 @@ class _FillProfileCarrierWidgetState extends State<FillProfileCarrierWidget> {
                                     maxLengthEnforcement: MaxLengthEnforcement.enforced,
                                     buildCounter: (context, {required currentLength, required isFocused, maxLength}) =>
                                         null,
-                                    keyboardType: TextInputType.number,
+                                    // Водительские права США почти во всех штатах содержат
+                                    // букву (CA — D1234567, FL — A123456789012). Фильтр
+                                    // '[0-9]' удалял её при вводе, то есть корректный номер
+                                    // ввести было физически невозможно.
+                                    keyboardType: TextInputType.text,
+                                    textCapitalization: TextCapitalization.characters,
                                     cursorColor: FlutterFlowTheme.of(context).primary,
                                     validator: _model.driverNumberTextControllerValidator.asValidator(context),
-                                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[0-9]'))],
+                                    inputFormatters: [
+                                      documentNumberFilter,
+                                      ...documentNumberFormatters,
+                                    ],
                                   ),
                                 ),
                               ),

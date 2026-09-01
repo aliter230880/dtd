@@ -1,4 +1,5 @@
 import '/flutter_flow/flutter_flow_util.dart';
+import '/custom_code/document_validators.dart';
 import 'edit_diller_profile1_widget.dart' show EditDillerProfile1Widget;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class EditDillerProfile1Model
       );
     }
 
-    return null;
+    return DocumentValidators.dealerLicense(val);
   }
 
   // State field(s) for driverNumber widget.
@@ -40,7 +41,7 @@ class EditDillerProfile1Model
       );
     }
 
-    return null;
+    return DocumentValidators.driverLicense(val);
   }
 
   // State field(s) for takeDate widget.

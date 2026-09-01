@@ -2,6 +2,7 @@ import 'package:auto_deal_app/auth/firebase_auth/auth_util.dart';
 import 'package:auto_deal_app/backend/backend.dart';
 import 'package:auto_deal_app/backend/push_notifications/push_notifications_util.dart';
 import 'package:auto_deal_app/backend/schema/enums/enums.dart';
+import 'package:auto_deal_app/components/insurance_offer_bottom_widget.dart';
 import 'package:auto_deal_app/components/select_carrier_modol_bottom.dart';
 import 'package:auto_deal_app/flutter_flow/flutter_flow_icon_button.dart';
 import 'package:auto_deal_app/flutter_flow/flutter_flow_theme.dart';
@@ -53,6 +54,18 @@ class _DealResponsesWidgetState extends State<DealResponsesWidget> {
     );
     if (confirmData == null) return;
 
+    // Машина отдаётся другому человеку именно в этот момент — последняя
+    // возможность её застраховать. На этапе создания заказа перевозчик
+    // ещё не известен, а тариф зависит от того, КОМУ отдают машину.
+    final insuranceResult = await _offerInsurance(
+      myResponse: myResponse,
+      price: (confirmData['price'] as num?)?.toInt() ??
+          widget.deal?.price.toInt() ??
+          0,
+    );
+    // null — дилер закрыл лист, не приняв решения: отправку не начинаем.
+    if (insuranceResult == null) return;
+
     final Map<String, dynamic> data = {
       'status': DealStatus.InConfirm.name,
       'carrier': myResponse?.user,
@@ -63,6 +76,15 @@ class _DealResponsesWidgetState extends State<DealResponsesWidget> {
       data['responses'] = FieldValue.arrayRemove([myResponse.toMap()]);
     }
 
+    // Факт оплаты и реквизиты полиса фиксируются в той же записи,
+    // что и смена статуса — иначе возможно состояние «машина отправлена,
+    // страховка оплачена, но в заказе не отражена».
+    data['insurance_required'] = insuranceResult['insured'] == true;
+    final quote = insuranceResult['quote'] as Map<String, dynamic>?;
+    if (quote != null) {
+      data.addAll(quote);
+    }
+
     await widget.deal?.reference.update(data);
 
     if (mounted) {
@@ -70,6 +92,60 @@ class _DealResponsesWidgetState extends State<DealResponsesWidget> {
     }
 
     NotificationService.onDillerAcceptResponse(myResponse!.user!, widget.deal!.reference);
+  }
+
+  /// Показывает предложение застраховать перевозку.
+  ///
+  /// Возвращает `null`, если дилер закрыл лист, не приняв решения — в этом
+  /// случае машину отправлять нельзя. Иначе — карту с флагом `insured`
+  /// и, при оплате, реквизитами полиса.
+  Future<Map<String, dynamic>?> _offerInsurance({
+    required ResponseStruct? myResponse,
+    required int price,
+  }) async {
+    final dealRef = widget.deal?.reference;
+    if (dealRef == null) return <String, dynamic>{'insured': false};
+
+    // Тариф и текст предупреждения зависят от того, кому отдают машину:
+    // у физлица без коммерческого покрытия риск для дилера заметно выше.
+    var carrierIsIndividual = false;
+    var carrierHasOwnInsurance = false;
+    try {
+      final carrierRef = myResponse?.user;
+      if (carrierRef != null) {
+        final carrier = await UsersRecord.getDocumentOnce(carrierRef);
+        // carrier_kind отсутствует у ранее зарегистрированных перевозчиков —
+        // они считаются компаниями (см. решение по схеме данных).
+        final snapshot = carrier.snapshotData;
+        carrierIsIndividual = snapshot['carrier_kind'] == 'individual';
+        carrierHasOwnInsurance = snapshot['insurance_verified'] == true;
+      }
+    } catch (_) {
+      // Не удалось прочитать профиль — показываем нейтральный текст.
+      // Само предложение страховки при этом не скрываем.
+    }
+
+    if (!mounted) return null;
+
+    return showModalBottomSheet<Map<String, dynamic>>(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      // Решение о страховке нельзя смахнуть жестом мимо воли —
+      // отказ должен быть осознанным.
+      isDismissible: false,
+      enableDrag: false,
+      context: context,
+      builder: (context) => Padding(
+        padding: MediaQuery.viewInsetsOf(context),
+        child: InsuranceOfferBottomWidget(
+          dealRef: dealRef,
+          carName: widget.deal?.carName ?? '',
+          price: price,
+          carrierIsIndividual: carrierIsIndividual,
+          carrierHasOwnInsurance: carrierHasOwnInsurance,
+        ),
+      ),
+    );
   }
 
   //для создания чата

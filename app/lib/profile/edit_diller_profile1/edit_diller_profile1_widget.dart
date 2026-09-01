@@ -6,6 +6,7 @@ import 'package:auto_deal_app/flutter_flow/upload_data.dart';
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
+import '/custom_code/document_validators.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -238,10 +239,11 @@ class _EditDillerProfile1WidgetState extends State<EditDillerProfile1Widget> {
                                       maxLengthEnforcement: MaxLengthEnforcement.enforced,
                                       buildCounter:
                                           (context, {required currentLength, required isFocused, maxLength}) => null,
-                                      keyboardType: TextInputType.number,
+                                      keyboardType: TextInputType.text,
                                       cursorColor: FlutterFlowTheme.of(context).primary,
                                       validator: _model.dillerNumberTextControllerValidator.asValidator(context),
-                                      inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[0-9]'))],
+                                      inputFormatters: [documentNumberFilter,
+                                          ...documentNumberFormatters],
                                     ),
                                   ),
                                 ),
@@ -336,10 +338,11 @@ class _EditDillerProfile1WidgetState extends State<EditDillerProfile1Widget> {
                                       maxLengthEnforcement: MaxLengthEnforcement.enforced,
                                       buildCounter:
                                           (context, {required currentLength, required isFocused, maxLength}) => null,
-                                      keyboardType: TextInputType.number,
+                                      keyboardType: TextInputType.text,
                                       cursorColor: FlutterFlowTheme.of(context).primary,
                                       validator: _model.driverNumberTextControllerValidator.asValidator(context),
-                                      inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[0-9]'))],
+                                      inputFormatters: [documentNumberFilter,
+                                      ...documentNumberFormatters],
                                     ),
                                   ),
                                 ),
