@@ -603,14 +603,16 @@ class _FillProfileCarrierWidgetState extends State<FillProfileCarrierWidget> {
                               _model.companyNameTextController.text == '',
                               false,
                             ) ||
-                            valueOrDefault<bool>(
-                              _model.carrierNumberTextController.text == '',
-                              false,
-                            ) ||
-                            valueOrDefault<bool>(
-                              _model.driverNumberTextController.text == '',
-                              false,
-                            ) ||
+                            ((currentUserDocument?.carrierKind ?? 'company') != 'individual' &&
+                                valueOrDefault<bool>(
+                                  _model.companyNameTextController.text == '',
+                                  false,
+                                )) ||
+                            ((currentUserDocument?.carrierKind ?? 'company') != 'individual' &&
+                                valueOrDefault<bool>(
+                                  _model.carrierNumberTextController.text == '',
+                                  false,
+                                )) ||
                             (_model.isDataUploading == true))
                         ? null
                         : () async {
@@ -632,16 +634,28 @@ class _FillProfileCarrierWidgetState extends State<FillProfileCarrierWidget> {
                               );
                               return;
                             } else {
-                              await currentUserReference!.update(createUsersRecordData(
-                                profileFilled: true,
-                                balance: 0.0,
-                                rate: 0.0,
-                                carrierCompanyName: _model.companyNameTextController.text,
-                                carrierNumber: _model.carrierNumberTextController.text,
-                                carrierDriverLicense: _model.driverNumberTextController.text,
-                                freeResponseCount: 5,
-                                file: _model.uploadedFileUrl,
-                              ));
+                              final userRef = currentUserReference;
+                              if (userRef == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Профиль пользователя ещё не готов. Повторите через несколько секунд.')),
+                                );
+                                return;
+                              }
+                              try {
+                                await userRef.update(createUsersRecordData(
+                                  profileFilled: true,
+                                  rate: 0.0,
+                                  carrierCompanyName: _model.companyNameTextController.text,
+                                  carrierNumber: _model.carrierNumberTextController.text,
+                                  carrierDriverLicense: _model.driverNumberTextController.text,
+                                  file: _model.uploadedFileUrl,
+                                ));
+                              } on FirebaseException catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Не удалось сохранить профиль: ${e.message ?? e.code}')),
+                                );
+                                return;
+                              }
                             }
 
                             await showDialog(

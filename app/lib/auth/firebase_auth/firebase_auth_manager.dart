@@ -58,7 +58,9 @@ class FirebaseAuthManager extends AuthManager
   @override
   Future signOut() {
     logFirebaseEvent("SIGN_OUT");
-    return FirebaseAuth.instance.signOut();
+    // signOutWithGoogle отключает и Google-клиент (disconnect), иначе
+    // следующий вход молча повторно выбирает прежний аккаунт.
+    return signOutWithGoogle();
   }
 
   @override

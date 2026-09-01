@@ -30,14 +30,15 @@ service cloud.firestore {
     match /users/{document} {
       allow create: if true;
       allow read: if true;
-      // Владелец может обновлять свой профиль, но НЕ доверенные поля:
-      // verification/balance/carrier_total_earning/free_response_count/type
-      // пишутся только Cloud Functions (verification.ts, stripeWebhook).
+      // Роль можно выбрать один раз при первичном заполнении профиля.
+      // После этого type и доверенные поля меняются только Cloud Functions.
       allow update: if request.auth != null
         && request.auth.uid == document
+        && (!resource.data.keys().hasAll(['profile_filled']) || resource.data.profile_filled == false
+            || !request.resource.data.diff(resource.data).affectedKeys().hasAny(['type']))
         && !request.resource.data.diff(resource.data).affectedKeys()
              .hasAny(['verification', 'balance', 'carrier_total_earning',
-                      'free_response_count', 'type']);
+                      'free_response_count']) ;
       allow delete: if false;
     }
 

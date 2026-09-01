@@ -714,14 +714,29 @@ class _FillProfileDillerWidgetState extends State<FillProfileDillerWidget> {
                             );
                             return;
                           } else {
-                            await currentUserReference!.update(createUsersRecordData(
-                              dillerLicense: _model.dillerNumberTextController.text,
-                              dillerDriverLicense: _model.driverNumberTextController.text,
-                              dillerDriverDate: _model.datePicked,
-                              file: _model.uploadedFileUrl,
-                            ));
+                            final userRef = currentUserReference;
+                            if (userRef == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Профиль пользователя ещё не готов. Повторите через несколько секунд.')),
+                              );
+                              return;
+                            }
+                            try {
+                              await userRef.update(createUsersRecordData(
+                                dillerLicense: _model.dillerNumberTextController.text,
+                                dillerDriverLicense: _model.driverNumberTextController.text,
+                                dillerDriverDate: _model.datePicked,
+                                file: _model.uploadedFileUrl,
+                              ));
+                            } on FirebaseException catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Не удалось сохранить профиль дилера: ${e.message ?? e.code}')),
+                              );
+                              return;
+                            }
                           }
 
+                          if (!context.mounted) return;
                           context.pushNamed('fill_profile_car_numbers');
                         },
                   text: FFLocalizations.of(context).getText(

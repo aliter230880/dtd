@@ -6,7 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 /// Web client ID (oauth_client type 3 из google-services.json).
 /// Нужен, чтобы Google Sign-In выдал idToken, который примет Firebase.
 const String _kWebClientId =
-    '380857780783-0hqq30ag4fdirstq0qcmtf6qa7vbft4m.apps.googleusercontent.com';
+    '406048199497-cnsnonu4e22n7uesgh5g14oc4o26i4c5.apps.googleusercontent.com';
 
 final GoogleSignIn _googleSignIn = GoogleSignIn(
   serverClientId: _kWebClientId,
@@ -87,6 +87,11 @@ Future<UserCredential?> googleSignInFunc() async {
 }
 
 Future signOutWithGoogle() async {
+  // disconnect() отзывает доступы и сбрасывает выбранный аккаунт:
+  // без него signIn() молча заходит в прежний аккаунт, не показывая выбор.
+  try {
+    await _googleSignIn.disconnect();
+  } catch (_) {}
   try {
     await _googleSignIn.signOut();
   } catch (_) {}

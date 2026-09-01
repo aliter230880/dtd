@@ -457,12 +457,33 @@ Future<FFFirestorePage<T>> queryCollectionPage<T>(
   return FFFirestorePage(data, dataStream, nextPageToken);
 }
 
+// Повторяет операцию при транзитных сбоях Firestore: первый заход в базу
+// сразу после логина может получить unavailable/deadline-exceeded до
+// установления соединения — повтор с паузой решает это без перезапуска.
+Future<T> retryFirestoreTransient<T>(Future<T> Function() op) async {
+  const attempts = 4;
+  var delay = const Duration(seconds: 1);
+  for (var attempt = 1;; attempt++) {
+    try {
+      return await op();
+    } catch (e) {
+      final transient = e is FirebaseException &&
+          (e.code == 'unavailable' || e.code == 'deadline-exceeded');
+      if (!transient || attempt >= attempts) rethrow;
+      print('Firestore transient error ($attempt/$attempts), retrying: $e');
+      await Future.delayed(delay);
+      delay = delay * 2;
+    }
+  }
+}
+
 // Creates a Firestore document representing the logged in user if it doesn't yet exist
 Future maybeCreateUser(User user) async {
   final userRecord = UsersRecord.collection.doc(user.uid);
-  final userExists = await userRecord.get().then((u) => u.exists);
+  final userExists = await retryFirestoreTransient(() => userRecord.get()).then((u) => u.exists);
   if (userExists) {
-    currentUserDocument = await UsersRecord.getDocumentOnce(userRecord);
+    currentUserDocument =
+        await retryFirestoreTransient(() => UsersRecord.getDocumentOnce(userRecord));
     return;
   }
 
@@ -498,7 +519,7 @@ Future maybeCreateUser(User user) async {
   );
 
   try {
-    await userRecord.set(userData);
+    await retryFirestoreTransient(() => userRecord.set(userData));
   } catch (e) {
     print('Failed to create user doc: $e');
     // User doc creation failed, but auth succeeded — allow login

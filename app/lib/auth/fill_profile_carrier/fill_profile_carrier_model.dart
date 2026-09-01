@@ -21,8 +21,9 @@ class FillProfileCarrierModel
   String? Function(BuildContext, String?)? companyNameTextControllerValidator;
   String? _companyNameTextControllerValidator(
       BuildContext context, String? val) {
+    final individual = (currentUserDocument?.carrierKind ?? 'company') == 'individual';
     if (val == null || val.isEmpty) {
-      return FFLocalizations.of(context).getText(
+      return individual ? null : FFLocalizations.of(context).getText(
         'c782yqr5' /* Введите название компании */,
       );
     }
@@ -42,32 +43,34 @@ class FillProfileCarrierModel
   String? Function(BuildContext, String?)? carrierNumberTextControllerValidator;
   String? _carrierNumberTextControllerValidator(
       BuildContext context, String? val) {
+    final individual = (currentUserDocument?.carrierKind ?? 'company') == 'individual';
+    // Физлицу USDOT/MC не требуется: номер оставляем пустым.
+    if (individual && (val == null || val.isEmpty)) return null;
     if (val == null || val.isEmpty) {
       return FFLocalizations.of(context).getText(
         'u2zbq5gt' /* Введите номер перевозчика */,
       );
     }
 
-    // Физлицу USDOT не выдаётся — там путь верификации через личность,
-    // поэтому форматную маску реестра к нему не применяем.
-    if ((currentUserDocument?.carrierKind ?? 'company') == 'individual') {
+    // Для физлица, если номер всё же введён, проверяем только минимальную длину.
+    if (individual) {
       return val.length < 3
           ? FFLocalizations.of(context).getText('xjrxm5vo' /* Минимум 3 символа */)
           : null;
     }
 
-    // Форматная проверка USDOT/MC до обращения к реестру FMCSA:
-    // ловим опечатки локально, мгновенно и без сетевых запросов.
-    final dot = Validators.validateDot(val);
-    if (dot.status == VerificationStatus.checking) return null;
-
-    final mc = Validators.validateMc(val);
-    if (mc.status == VerificationStatus.checking ||
-        mc.status == VerificationStatus.needsReview) {
+    // Форматная проверка USDOT/MC до обращения к реестру FMCSA.
+    // Сначала распознаём явный префикс MC/MX/FF, иначе числовое значение
+    // трактуем как USDOT. Результат MC нельзя ошибочно заменять сообщением DOT.
+    final normalized = val.trim().toUpperCase();
+    final isMc = RegExp(r'^(MC|MX|FF)[ -]?\d+$').hasMatch(normalized);
+    final result = isMc ? Validators.validateMc(val) : Validators.validateDot(val);
+    if (result.status == VerificationStatus.checking ||
+        result.status == VerificationStatus.needsReview) {
       return null;
     }
-
-    return dot.message ?? 'Укажите USDOT (1–8 цифр) или MC-номер';
+    if (result.status == VerificationStatus.idle) return null;
+    return result.message ?? 'Укажите USDOT (1–8 цифр) или MC-номер';
   }
 
   // State field(s) for driverNumber widget.

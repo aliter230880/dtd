@@ -182,7 +182,16 @@ class _FillProfileTypeWidgetState extends State<FillProfileTypeWidget> {
                       ? null
                       : () async {
                           if (_model.type != null) {
-                            await currentUserReference!.update(createUsersRecordData(
+                          final userRef = currentUserReference;
+                          if (userRef == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Профиль пользователя ещё не готов. Повторите через несколько секунд.')),
+                            );
+                            return;
+                          }
+
+                          try {
+                            await userRef.update(createUsersRecordData(
                               type: _model.type,
                               carrierKind:
                                   _model.type == UserType.Carrier ? _model.carrierKind : null,
@@ -190,18 +199,20 @@ class _FillProfileTypeWidgetState extends State<FillProfileTypeWidget> {
                                   ? (_model.carrierKind == 'individual' ? 'identity' : 'fmcsa')
                                   : null,
                             ));
-                            if (_model.type == UserType.Diller) {
-                              context.pushNamed('fill_profile_diller');
-
-                              return;
-                            } else {
-                              context.pushNamed('fill_profile_carrier');
-
-                              return;
-                            }
-                          } else {
+                          } on FirebaseException catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Не удалось сохранить роль: ${e.message ?? e.code}')),
+                            );
                             return;
                           }
+
+                          if (!context.mounted) return;
+                          if (_model.type == UserType.Diller) {
+                            context.pushNamed('fill_profile_diller');
+                          } else {
+                            context.pushNamed('fill_profile_carrier');
+                          }
+                        }
                         },
                   text: FFLocalizations.of(context).getText(
                     'ztj4xibk' /* Далее */,
