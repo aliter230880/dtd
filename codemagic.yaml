@@ -1,4 +1,19 @@
 workflows:
+  web-release:
+    name: DTD Web PWA
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    working_directory: app
+    environment:
+      flutter: stable
+    scripts:
+      - name: Install dependencies
+        script: flutter pub get
+      - name: Build Flutter Web
+        script: flutter build web --release
+    artifacts:
+      - build/web/**
+
   ios-release:
     name: DTD iOS Release
     max_build_duration: 60

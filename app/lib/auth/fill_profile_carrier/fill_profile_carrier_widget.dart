@@ -240,7 +240,6 @@ class _FillProfileCarrierWidgetState extends State<FillProfileCarrierWidget> {
                                       () => setState(() {}),
                                     ),
                                     autofocus: false,
-                                    textCapitalization: TextCapitalization.none,
                                     textInputAction: TextInputAction.next,
                                     obscureText: false,
                                     decoration: InputDecoration(
@@ -337,7 +336,6 @@ class _FillProfileCarrierWidgetState extends State<FillProfileCarrierWidget> {
                                       () => setState(() {}),
                                     ),
                                     autofocus: false,
-                                    textCapitalization: TextCapitalization.none,
                                     textInputAction: TextInputAction.next,
                                     obscureText: false,
                                     decoration: InputDecoration(

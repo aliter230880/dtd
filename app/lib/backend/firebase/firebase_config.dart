@@ -5,12 +5,13 @@ Future initFirebase() async {
   if (kIsWeb) {
     await Firebase.initializeApp(
         options: const FirebaseOptions(
-            apiKey: "AIzaSyAK_vSxa9gzQFHngX6s6Etn1XLspy1CRUc",
-            authDomain: "dealertodealer-84957.firebaseapp.com",
-            projectId: "dealertodealer-84957",
-            storageBucket: "dealertodealer-84957.appspot.com",
-            messagingSenderId: "380857780783",
-            appId: "1:380857780783:web:18209dcd20060d274694da"));
+            apiKey: "AIzaSyA0DbQZnoBHzaU6NLEEVlEQrOu4rE_F_Jw",
+            authDomain: "dtdapp007.firebaseapp.com",
+            projectId: "dtdapp007",
+            storageBucket: "dtdapp007.firebasestorage.app",
+            messagingSenderId: "406048199497",
+            appId: "1:406048199497:web:447902119b1ac144634098",
+            measurementId: "G-DQ8514KSBG"));
   } else {
     await Firebase.initializeApp();
   }
