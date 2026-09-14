@@ -47,6 +47,19 @@ workflows:
           cp /tmp/dtd.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/$UUID.mobileprovision
           echo "installed profile $UUID"
           xcode-project use-profiles
+          # Apple no longer accepts binaries containing legacy bitcode
+          # (old Facebook SDK pods ship with it) - strip it everywhere.
+          find ios/Pods -name "*.framework" -type d | while read -r fw; do
+            name=$(basename "$fw" .framework)
+            bin="$fw/$name"
+            if [ -f "$bin" ]; then
+              xcrun bitcode_strip "$bin" - -o "$bin.strip" && mv "$bin.strip" "$bin"
+            fi
+          done
+          find ios/Pods -name "*.a" -type f | while read -r lib; do
+            xcrun bitcode_strip "$lib" - -o "$lib.strip" && mv "$lib.strip" "$lib"
+          done
+          echo "bitcode stripped"
       - name: Build IPA
         script: |
           flutter build ipa --release --export-options-plist=ios/exportOptions.plist
