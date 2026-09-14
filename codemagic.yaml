@@ -22,12 +22,11 @@ workflows:
     integrations:
       app_store_connect: Codemagic
     environment:
+      groups:
+        - ios_signing_files
       flutter: stable
       xcode: latest
       cocoapods: default
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.sprestay.autodealapp
       vars:
         BUNDLE_ID: com.sprestay.autodealapp
     scripts:
@@ -36,12 +35,20 @@ workflows:
           flutter pub get
           cd ios
           pod install
-      - name: Configure signing
+      - name: Set up signing
         script: |
-          xcode-project use-profiles
+          echo $CM_DIST_P12_B64 | base64 --decode > /tmp/dist.p12
+          keychain initialize
+          keychain add-certificates --certificate /tmp/dist.p12 --certificate-password "$CM_P12_PASS"
+          echo $CM_PROFILE_B64 | base64 --decode > /tmp/dtd.mobileprovision
+          security cms -D -i /tmp/dtd.mobileprovision > /tmp/profile.plist
+          UUID=$(/usr/libexec/PlistBuddy -c 'Print :UUID' /tmp/profile.plist)
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp /tmp/dtd.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/$UUID.mobileprovision
+          echo "installed profile $UUID"
       - name: Build IPA
         script: |
-          flutter build ipa --release
+          flutter build ipa --release --export-options-plist=ios/exportOptions.plist
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
