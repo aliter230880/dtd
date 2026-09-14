@@ -14,7 +14,7 @@ class DealDetailDillerModel extends FlutterFlowModel<DealDetailDillerWidget> {
   // Model for DillerDealStatusComp component.
   late DillerDealStatusCompModel dillerDealStatusCompModel;
   // State field(s) for Carousel widget.
-  CarouselController? carouselController;
+  CarouselSliderController? carouselController;
 
   int carouselCurrentIndex = 0;
 

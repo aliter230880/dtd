@@ -515,7 +515,7 @@ class _DealDetailDillerWidgetState extends State<DealDetailDillerWidget> {
                               },
                             );
                           },
-                          carouselController: _model.carouselController ??= CarouselController(),
+                          carouselController: _model.carouselController ??= CarouselSliderController(),
                           options: CarouselOptions(
                             height: 240,
                             initialPage: max(0, min(0, imagesVar.length - 1)),

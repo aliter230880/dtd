@@ -1000,7 +1000,7 @@ class _InSearchSliderState extends State<_InSearchSlider> {
                     },
                   );
                 },
-                carouselController: CarouselController(),
+                carouselController: CarouselSliderController(),
                 options: CarouselOptions(
                   height: 280,
                   initialPage: max(0, min(0, imagesVar.length - 1)),
@@ -1152,7 +1152,7 @@ class __MainSliderState extends State<_MainSlider> {
                     },
                   );
                 },
-                carouselController: CarouselController(),
+                carouselController: CarouselSliderController(),
                 options: CarouselOptions(
                   height: 280,
                   initialPage: max(0, min(0, imagesVar.length - 1)),
