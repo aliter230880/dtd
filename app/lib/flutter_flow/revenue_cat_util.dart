@@ -24,11 +24,11 @@ Future initialize(
   }
   try {
     if (Platform.isIOS) {
-      await Purchases.setDebugLogsEnabled(debugLogEnabled);
-      await Purchases.setup(appStoreKey);
+      Purchases.setLogLevel(debugLogEnabled ? LogLevel.debug : LogLevel.warn);
+      await Purchases.configure(PurchasesConfiguration(appStoreKey));
     } else if (Platform.isAndroid) {
-      await Purchases.setDebugLogsEnabled(debugLogEnabled);
-      await Purchases.setup(playStoreKey);
+      Purchases.setLogLevel(debugLogEnabled ? LogLevel.debug : LogLevel.warn);
+      await Purchases.configure(PurchasesConfiguration(playStoreKey));
     } else {
       print("RevenueCat is not supported on this platform.");
       return;
