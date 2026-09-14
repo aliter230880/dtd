@@ -59,7 +59,7 @@ dependencies:
   flutter_native_splash: 2.3.1
   flutter_plugin_android_lifecycle: 2.0.17
   flutter_svg: 2.0.9
-  font_awesome_flutter: 10.6.0
+  font_awesome_flutter: ^10.7.0
   from_css_color: 2.0.0
   geolocator: 10.1.0
   geolocator_android: 4.4.0
