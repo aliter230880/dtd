@@ -46,6 +46,7 @@ workflows:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp /tmp/dtd.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/$UUID.mobileprovision
           echo "installed profile $UUID"
+          xcode-project use-profiles
       - name: Build IPA
         script: |
           flutter build ipa --release --export-options-plist=ios/exportOptions.plist
