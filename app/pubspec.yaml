@@ -138,6 +138,8 @@ dependencies:
 dependency_overrides:
   http: 1.2.0
   uuid: ^4.0.0
+  font_awesome_flutter:
+    path: third_party/font_awesome_flutter
 
 dev_dependencies:
   flutter_launcher_icons: 0.13.1
