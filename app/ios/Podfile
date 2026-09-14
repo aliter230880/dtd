@@ -40,6 +40,13 @@ post_install do |installer|
     flutter_additional_ios_build_settings(target)
     target.build_configurations.each do |config|
       config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
+      # Old firebase_*/cloud_* plugin headers include the non-modular
+      # Firebase.h umbrella, which Xcode 26 rejects while verifying the
+      # pod's framework module. Their headers are only included
+      # textually by other pods, so disabling their module map is safe.
+      if target.name.start_with?('firebase_', 'cloud_')
+        config.build_settings['DEFINES_MODULE'] = 'NO'
+      end
       config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
         '$(inherited)',
