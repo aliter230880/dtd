@@ -51,7 +51,7 @@ dependencies:
   firebase_storage_web: 3.7.2
   flutter_animate: 4.1.1+1
   flutter_cache_manager: 3.3.1
-  flutter_facebook_auth: 4.0.0
+  flutter_facebook_auth: ^6.0.0
   flutter_keyboard_visibility: 5.4.1
   flutter_native_splash: 2.3.1
   flutter_plugin_android_lifecycle: 2.0.17

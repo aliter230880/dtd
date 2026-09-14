@@ -17,7 +17,9 @@ Future<UserCredential?> facebookSignIn() async {
 
   // Trigger the sign-in flow
   try {
-    final LoginResult loginToken = await FacebookAuth.instance.login();
+    final LoginResult loginToken = await FacebookAuth.instance.login(
+      permissions: ['public_profile', 'email'],
+    );
     print(loginToken.message);
     print(loginToken.status);
     final AccessToken? result = loginToken.accessToken;
