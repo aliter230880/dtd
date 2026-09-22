@@ -16,6 +16,7 @@ import 'auth/firebase_auth/firebase_user_provider.dart';
 import 'auth/firebase_auth/auth_util.dart';
 
 import 'backend/firebase/firebase_config.dart';
+import 'backend/accrual/auto_accrual.dart';
 import 'components/take_login_alert_widget.dart';
 import 'flutter_flow/flutter_flow_theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
@@ -27,6 +28,9 @@ import 'index.dart';
 @pragma('vm:entry-point')
 Future<void> fcmBackgroundHandler(RemoteMessage message) async {
   await initFirebase();
+
+  // Ленивое автоначисление внутренней валюты (ТЗ, ДОП-1)
+  initAutoAccrual();
 }
 
 void main() async {

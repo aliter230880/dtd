@@ -3,6 +3,7 @@
 import 'dart:math';
 
 import 'package:auto_deal_app/backend/firebase_storage/storage.dart';
+import 'show_full_photo.dart';
 import 'package:auto_deal_app/backend/push_notifications/push_notifications_util.dart';
 import 'package:collection/collection.dart';
 
@@ -657,7 +658,9 @@ class _ChatRoomPageWidgetState extends State<ChatRoomPageWidget> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
-              ClipRRect(
+              GestureDetector(
+                onTap: () => showFullImageUrl(context, message.message),
+                child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: CachedNetworkImage(
                   imageUrl: message.message,
@@ -674,6 +677,7 @@ class _ChatRoomPageWidgetState extends State<ChatRoomPageWidget> {
                     return const Center(child: Icon(Icons.error, color: Colors.white30));
                   },
                 ),
+              ),
               ),
               const SizedBox(height: 4),
               Text(

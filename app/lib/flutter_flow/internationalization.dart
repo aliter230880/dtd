@@ -96,6 +96,7 @@ Locale createLocale(String language) => language.contains('_')
 final kTranslationsMap = <Map<String, Map<String, String>>>[
   // HomePage
   {
+
     'g0zc5ir2': {
       'ru': 'Добро пожаловать,',
       'en': 'Welcome,',

@@ -41,6 +41,11 @@ class UsersRecord extends FirestoreRecord {
   DateTime? get createdTime => _createdTime;
   bool hasCreatedTime() => _createdTime != null;
 
+  // "last_accrual_at" field.
+  DateTime? _lastAccrualAt;
+  DateTime? get lastAccrualAt => _lastAccrualAt;
+  bool hasLastAccrualAt() => _lastAccrualAt != null;
+
   // "phone_number" field.
   String? _phoneNumber;
   String get phoneNumber => _phoneNumber ?? '';
@@ -239,6 +244,7 @@ class UsersRecord extends FirestoreRecord {
     _photoUrl = snapshotData['photo_url'] as String?;
     _uid = snapshotData['uid'] as String?;
     _createdTime = snapshotData['created_time'] as DateTime?;
+    _lastAccrualAt = snapshotData['last_accrual_at'] as DateTime?;
     _phoneNumber = snapshotData['phone_number'] as String?;
     _type = deserializeEnum<UserType>(snapshotData['type']);
     _balance = castToType<double>(snapshotData['balance']);
@@ -315,6 +321,7 @@ Map<String, dynamic> createUsersRecordData({
   String? photoUrl,
   String? uid,
   DateTime? createdTime,
+  DateTime? lastAccrualAt,
   String? phoneNumber,
   UserType? type,
   double? balance,
@@ -360,6 +367,7 @@ Map<String, dynamic> createUsersRecordData({
       'photo_url': photoUrl,
       'uid': uid,
       'created_time': createdTime,
+      'last_accrual_at': lastAccrualAt,
       'phone_number': phoneNumber,
       'type': type,
       'balance': balance,
@@ -414,6 +422,7 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e1?.photoUrl == e2?.photoUrl &&
         e1?.uid == e2?.uid &&
         e1?.createdTime == e2?.createdTime &&
+        e1?.lastAccrualAt == e2?.lastAccrualAt &&
         e1?.phoneNumber == e2?.phoneNumber &&
         e1?.type == e2?.type &&
         e1?.balance == e2?.balance &&
@@ -458,6 +467,7 @@ class UsersRecordDocumentEquality implements Equality<UsersRecord> {
         e?.photoUrl,
         e?.uid,
         e?.createdTime,
+        e?.lastAccrualAt,
         e?.phoneNumber,
         e?.type,
         e?.balance,

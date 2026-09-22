@@ -43,6 +43,9 @@ class _SettingPublicationsTabWidgetState extends State<SettingPublicationsTabWid
   TextEditingController initialFreeResponsesController = TextEditingController();
   TextEditingController publicationCostController = TextEditingController();
   TextEditingController responseCostController = TextEditingController();
+  TextEditingController autoAccrualAmountController = TextEditingController();
+  TextEditingController autoAccrualPeriodController = TextEditingController();
+  bool autoAccrualEnabled = false;
 
   void initSetting() async {
     final data = await FirebaseFirestore.instance.collection('config').doc('configs').get();
@@ -58,6 +61,9 @@ class _SettingPublicationsTabWidgetState extends State<SettingPublicationsTabWid
     initialFreeResponsesController.text = initialFreeResponses.toString();
     publicationCostController.text = publicationCost.toString();
     responseCostController.text = responseCost.toString();
+    autoAccrualEnabled = config['auto_accrual_enabled'] == true;
+    autoAccrualAmountController.text = (config['auto_accrual_amount'] ?? 0).toString();
+    autoAccrualPeriodController.text = (config['auto_accrual_period_days'] ?? 7).toString();
 
     if (mounted) setState(() {});
   }
@@ -393,6 +399,130 @@ class _SettingPublicationsTabWidgetState extends State<SettingPublicationsTabWid
               ),
             ],
           ),
+          Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 14.0, 0.0, 10.0),
+                    child: Text(
+                      'Автоначисление валюты',
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Inter',
+                            fontSize: 16.0,
+                            letterSpacing: 0.0,
+                          ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 300.0,
+                    child: SwitchListTile(
+                      value: autoAccrualEnabled,
+                      onChanged: (v) => setState(() => autoAccrualEnabled = v),
+                      title: const Text(
+                        'Начислять всем автоматически',
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 50),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 14.0, 0.0, 10.0),
+                    child: Text(
+                      'Сумма начисления (монеты)',
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Inter',
+                            fontSize: 16.0,
+                            letterSpacing: 0.0,
+                          ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 300.0,
+                    child: TextFormField(
+                      controller: autoAccrualAmountController,
+                      autofocus: false,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        hintText: 'Например, 10',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Color(0xFFBDBDBD), width: 1.0),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Color(0xFFBDBDBD), width: 1.0),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        filled: true,
+                        fillColor: FlutterFlowTheme.of(context).primaryBackground,
+                        contentPadding: const EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 20.0),
+                      ),
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Inter',
+                            fontSize: 14.0,
+                            letterSpacing: 0.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 50),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(0.0, 14.0, 0.0, 10.0),
+                    child: Text(
+                      'Периодичность (дней)',
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Inter',
+                            fontSize: 16.0,
+                            letterSpacing: 0.0,
+                          ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 300.0,
+                    child: TextFormField(
+                      controller: autoAccrualPeriodController,
+                      autofocus: false,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        hintText: 'Например, 7',
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Color(0xFFBDBDBD), width: 1.0),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Color(0xFFBDBDBD), width: 1.0),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        filled: true,
+                        fillColor: FlutterFlowTheme.of(context).primaryBackground,
+                        contentPadding: const EdgeInsetsDirectional.fromSTEB(20.0, 20.0, 20.0, 20.0),
+                      ),
+                      style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Inter',
+                            fontSize: 14.0,
+                            letterSpacing: 0.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
           Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(0.0, 24.0, 0.0, 0.0),
               child: AppButtonWidget(
@@ -410,6 +540,8 @@ class _SettingPublicationsTabWidgetState extends State<SettingPublicationsTabWid
                   int? initialFreeResponsesSum = int.tryParse(initialFreeResponsesText);
                   int? publicationCostSum = int.tryParse(publicationCostText);
                   int? responseCostSum = int.tryParse(responseCostText);
+                  int? autoAccrualAmountSum = int.tryParse(autoAccrualAmountController.text.trim());
+                  int? autoAccrualPeriodSum = int.tryParse(autoAccrualPeriodController.text.trim());
 
                   if (publicationCostSum == null ||
                       publicationCostSum == 0 ||
@@ -425,6 +557,9 @@ class _SettingPublicationsTabWidgetState extends State<SettingPublicationsTabWid
                       "initial_free_responses": initialFreeResponsesSum ?? 0,
                       "publication_cost": publicationCostSum,
                       "response_cost": responseCostSum,
+                      "auto_accrual_enabled": autoAccrualEnabled,
+                      "auto_accrual_amount": autoAccrualAmountSum ?? 0,
+                      "auto_accrual_period_days": autoAccrualPeriodSum ?? 7,
                     },
                   );
                   if (mounted) {
