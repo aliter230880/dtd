@@ -7,6 +7,8 @@ import '../../auth/firebase_auth/auth_util.dart';
 import '../cloud_functions/cloud_functions.dart';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' show BuildContext;
+import 'package:auto_deal_app/flutter_flow/internationalization.dart';
 import 'package:stream_transform/stream_transform.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -212,5 +214,46 @@ class NotificationService {
       notificationSound: 'default',
       parameterData: {"dealRef": dealRef},
     );
+  }
+}
+
+String getLocaleText(BuildContext context, String key) {
+  switch (key) {
+    case 'Новый отклик!':
+      return FFLocalizations.of(context).getText('new_response');
+    case 'Перевозчик откликнулся на ваш заказ':
+      return FFLocalizations.of(context).getText('new_response_text');
+    case 'Перевозчик отменил отклик!':
+      return FFLocalizations.of(context).getText('response_caneled');
+    case 'Перевозчик отклонил ранее сделанный отклик':
+      return FFLocalizations.of(context).getText('response_caneled_text');
+    case 'Ваш отклик отклонен!':
+      return FFLocalizations.of(context).getText('your_response_caneled');
+    case 'Диллер отклонил ваш отклик':
+      return FFLocalizations.of(context).getText('your_response_caneled_text');
+    case 'Ваш отклик принят!':
+      return FFLocalizations.of(context).getText('dialer_accept');
+    case 'Диллер принял ваш отклик':
+      return FFLocalizations.of(context).getText('dialer_accept_text');
+    case 'Перевозчик отклонил предложение!':
+      return FFLocalizations.of(context).getText('carrier_reject_offer');
+    case 'Перевозчик отклонил ранее принятый отклик':
+      return FFLocalizations.of(context).getText('carrier_reject_offer_text');
+    case 'Перевозчик принял предложение!':
+      return FFLocalizations.of(context).getText('carrier_accept_offer');
+    case 'Ваш заказ был принят перевозчиком':
+      return FFLocalizations.of(context).getText('carrier_accept_offer_text');
+    case 'Диллер завершил сделку!':
+      return FFLocalizations.of(context).getText('dialer_complete');
+    case 'Работа с заказом завершена. Предлагаем оставить отзыв':
+      return FFLocalizations.of(context).getText('dialer_complete_text');
+    case 'Перевозчик завершил сделку!':
+      return FFLocalizations.of(context).getText('carrier_complete');
+    case 'Подтвердите завершение сделки':
+      return FFLocalizations.of(context).getText('carrier_complete_text');
+    case 'Новое сообщение':
+      return FFLocalizations.of(context).getText('new_message');
+    default:
+      return '-';
   }
 }
