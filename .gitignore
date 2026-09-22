@@ -44,3 +44,9 @@ crashlytics-build.log
 # Python
 **/__pycache__/
 *.pyc
+
+# секреты и временные папки — никогда не коммитить
+*.p8
+AuthKey_*.p8
+codemagic_token.txt
+AutoDealApp-master*/
