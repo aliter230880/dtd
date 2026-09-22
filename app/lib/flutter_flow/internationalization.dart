@@ -11,75 +11,7 @@ class FFLocalizations {
 
   static FFLocalizations of(BuildContext context) => Localizations.of<FFLocalizations>(context, FFLocalizations)!;
 
-  static List<String> languages() => ['ru', 'en'    'new_response': {
-      'ru': 'Новый отклик!',
-      'en': 'New response!',
-    },
-    'new_response_text': {
-      'ru': 'Перевозчик откликнулся на ваш заказ',
-      'en': 'The carrier has responded to your order.',
-    },
-    'response_caneled': {
-      'ru': 'Перевозчик отменил отклик!',
-      'en': 'The carrier has cancelled the response!',
-    },
-    'response_caneled_text': {
-      'ru': 'Перевозчик отклонил ранее сделанный отклик',
-      'en': 'The carrier rejected the previously made response.',
-    },
-    'your_response_caneled': {
-      'ru': 'Ваш отклик отклонен!',
-      'en': 'Your response has been rejected!',
-    },
-    'your_response_caneled_text': {
-      'ru': 'Дилер отклонил ваш отклик',
-      'en': 'The dealer has rejected your response.',
-    },
-    'dialer_accept': {
-      'ru': 'Ваш отклик принят!',
-      'en': 'Your response has been accepted!',
-    },
-    'dialer_accept_text': {
-      'ru': 'Дилер принял ваш отклик',
-      'en': 'The dealer has accepted your response.',
-    },
-    'carrier_reject_offer': {
-      'ru': 'Перевозчик отклонил предложение!',
-      'en': 'The carrier rejected the offer!',
-    },
-    'carrier_reject_offer_text': {
-      'ru': 'Перевозчик отклонил ранее принятый отклик',
-      'en': 'The carrier has rejected a previously accepted response.',
-    },
-    'carrier_accept_offer': {
-      'ru': 'Перевозчик принял предложение!',
-      'en': 'The carrier accepted the offer!',
-    },
-    'carrier_accept_offer_text': {
-      'ru': 'Ваш заказ был принят перевозчиком',
-      'en': 'Your order has been accepted by the carrier.',
-    },
-    'dialer_complete': {
-      'ru': 'Дилер завершил сделку!',
-      'en': 'The dealer has completed the deal!',
-    },
-    'dialer_complete_text': {
-      'ru': 'Работа с заказом завершена. Предлагаем оставить отзыв',
-      'en': 'The order is complete. Please leave a review',
-    },
-    'carrier_complete': {
-      'ru': 'Перевозчик завершил сделку!',
-      'en': 'The carrier has completed the transaction!',
-    },
-    'carrier_complete_text': {
-      'ru': 'Подтвердите завершение сделки',
-      'en': 'Confirm completion of the transaction',
-    },
-    'new_message': {
-      'ru': 'Новое сообщение',
-      'en': 'New message',
-    },
-];
+  static List<String> languages() => ['ru', 'en'];
 
   static late SharedPreferences _prefs;
   static Future initialize() async => _prefs = await SharedPreferences.getInstance();
@@ -1506,6 +1438,74 @@ final kTranslationsMap = <Map<String, Map<String, String>>>[
     'ms631o22': {
       'ru': '',
       'en': '',
+    },
+    'new_response': {
+      'ru': 'Новый отклик!',
+      'en': 'New response!',
+    },
+    'new_response_text': {
+      'ru': 'Перевозчик откликнулся на ваш заказ',
+      'en': 'The carrier has responded to your order.',
+    },
+    'response_caneled': {
+      'ru': 'Перевозчик отменил отклик!',
+      'en': 'The carrier has cancelled the response!',
+    },
+    'response_caneled_text': {
+      'ru': 'Перевозчик отклонил ранее сделанный отклик',
+      'en': 'The carrier rejected the previously made response.',
+    },
+    'your_response_caneled': {
+      'ru': 'Ваш отклик отклонен!',
+      'en': 'Your response has been rejected!',
+    },
+    'your_response_caneled_text': {
+      'ru': 'Дилер отклонил ваш отклик',
+      'en': 'The dealer has rejected your response.',
+    },
+    'dialer_accept': {
+      'ru': 'Ваш отклик принят!',
+      'en': 'Your response has been accepted!',
+    },
+    'dialer_accept_text': {
+      'ru': 'Дилер принял ваш отклик',
+      'en': 'The dealer has accepted your response.',
+    },
+    'carrier_reject_offer': {
+      'ru': 'Перевозчик отклонил предложение!',
+      'en': 'The carrier rejected the offer!',
+    },
+    'carrier_reject_offer_text': {
+      'ru': 'Перевозчик отклонил ранее принятый отклик',
+      'en': 'The carrier has rejected a previously accepted response.',
+    },
+    'carrier_accept_offer': {
+      'ru': 'Перевозчик принял предложение!',
+      'en': 'The carrier accepted the offer!',
+    },
+    'carrier_accept_offer_text': {
+      'ru': 'Ваш заказ был принят перевозчиком',
+      'en': 'Your order has been accepted by the carrier.',
+    },
+    'dialer_complete': {
+      'ru': 'Дилер завершил сделку!',
+      'en': 'The dealer has completed the deal!',
+    },
+    'dialer_complete_text': {
+      'ru': 'Работа с заказом завершена. Предлагаем оставить отзыв',
+      'en': 'The order is complete. Please leave a review',
+    },
+    'carrier_complete': {
+      'ru': 'Перевозчик завершил сделку!',
+      'en': 'The carrier has completed the transaction!',
+    },
+    'carrier_complete_text': {
+      'ru': 'Подтвердите завершение сделки',
+      'en': 'Confirm completion of the transaction',
+    },
+    'new_message': {
+      'ru': 'Новое сообщение',
+      'en': 'New message',
     },
   },
 ].reduce((a, b) => a..addAll(b));
