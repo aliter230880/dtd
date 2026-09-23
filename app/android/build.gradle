@@ -16,7 +16,7 @@ subprojects {
 // Old plugins (e.g. flutter_keyboard_visibility) predate AGP 8 and do not
 // declare a namespace; assign one from the project group so AGP 8 can build them.
 subprojects {
-    afterEvaluate { project ->
+    def fixNamespace = { project ->
         if (project.hasProperty("android")) {
             android {
                 if (namespace == null) {
@@ -24,6 +24,11 @@ subprojects {
                 }
             }
         }
+    }
+    if (project.state.executed) {
+        fixNamespace(project)
+    } else {
+        project.afterEvaluate { fixNamespace(it) }
     }
 }
 
