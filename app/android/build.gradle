@@ -35,7 +35,7 @@ subprojects {
 // flutter_facebook_auth 6.x compiles Kotlin with jvmTarget 17 while Flutter
 // defaults Java tasks to 1.8 - align all Kotlin modules to 1.8.
 subprojects {
-    afterEvaluate { project ->
+    def fixJvmTarget = { project ->
         if (project.plugins.hasPlugin("org.jetbrains.kotlin.android")) {
             project.android {
                 kotlinOptions {
@@ -43,6 +43,11 @@ subprojects {
                 }
             }
         }
+    }
+    if (project.state.executed) {
+        fixJvmTarget(project)
+    } else {
+        project.afterEvaluate { fixJvmTarget(it) }
     }
 }
 
