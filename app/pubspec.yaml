@@ -134,6 +134,7 @@ dependencies:
 
 dependency_overrides:
   http: 1.2.0
+  web: ^1.1.1
   uuid: ^4.0.0
   font_awesome_flutter:
     path: third_party/font_awesome_flutter
