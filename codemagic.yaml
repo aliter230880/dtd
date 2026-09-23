@@ -14,6 +14,39 @@ workflows:
     artifacts:
       - build/web/**
 
+  android-release:
+    name: DTD Android Release
+    max_build_duration: 45
+    instance_type: mac_mini_m2
+    working_directory: app
+    environment:
+      groups:
+        - android_signing
+      flutter: stable
+    scripts:
+      - name: Restore signing files
+        script: |
+          echo $ANDROID_KEYSTORE_B64 | base64 --decode > android/dtd.jks
+          cat > android/key.properties <<EOF
+          storePassword=$ANDROID_KEYSTORE_PASS
+          keyPassword=$ANDROID_KEYSTORE_PASS
+          keyAlias=$ANDROID_KEY_ALIAS
+          storeFile=../dtd.jks
+          EOF
+      - name: Install dependencies
+        script: flutter pub get
+      - name: Build APK
+        script: flutter build apk --release
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
+    publishing:
+      email:
+        recipients:
+          - aliter230880@gmail.com
+        notify:
+          success: true
+          failure: true
+
   ios-release:
     name: DTD iOS Release
     max_build_duration: 60
