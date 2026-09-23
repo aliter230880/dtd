@@ -36,9 +36,13 @@ workflows:
       - name: Install dependencies
         script: flutter pub get
       - name: Build APK
-        script: flutter build apk --release
+        script: |
+          set -o pipefail
+          flutter build apk --release 2>&1 | tee gradle_build.log
+          exit ${PIPESTATUS[0]}
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
+      - gradle_build.log
     publishing:
       email:
         recipients:
