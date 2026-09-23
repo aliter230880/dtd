@@ -34,7 +34,10 @@ workflows:
           storeFile=../dtd.jks
           EOF
       - name: Install dependencies
-        script: flutter pub get
+        script: |
+          set -o pipefail
+          flutter pub get 2>&1 | tee pub_get.log
+          exit ${PIPESTATUS[0]}
       - name: Build APK
         script: |
           set -o pipefail
@@ -43,6 +46,7 @@ workflows:
     artifacts:
       - build/app/outputs/flutter-apk/app-release.apk
       - gradle_build.log
+      - pub_get.log
     publishing:
       email:
         recipients:
