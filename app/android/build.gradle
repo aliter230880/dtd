@@ -55,6 +55,23 @@ subprojects {
     }
 }
 
+// Old plugin builds (sign_in_with_apple 4.x, keyboard_visibility, etc.) ship
+// Java 9+ sources without declaring compileSdk - force 34 for all plugin modules.
+subprojects {
+    def fixCompileSdk = { project ->
+        if (project.hasProperty("android") && project.name != "app") {
+            project.android {
+                compileSdkVersion 34
+            }
+        }
+    }
+    if (project.state.executed) {
+        fixCompileSdk(project)
+    } else {
+        project.afterEvaluate { fixCompileSdk(it) }
+    }
+}
+
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
