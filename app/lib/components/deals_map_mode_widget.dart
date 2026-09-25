@@ -233,23 +233,11 @@ class _DealsMapModeWidgetState extends State<DealsMapModeWidget> {
 
   void onNavigatoToDeal() async {
     if (loggedIn) {
-      if (currentUserDocument?.type == UserType.Diller) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Чтобы видеть заказы, войдите как перевозчик',
-              style: TextStyle(
-                color: FlutterFlowTheme.of(context).primaryText,
-              ),
-            ),
-            duration: const Duration(milliseconds: 4000),
-            backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-          ),
-        );
-        return;
-      } else {
+      if (currentUserDocument?.type == UserType.Diller &&
+          selectedMarker!.dealsRecord.owner == currentUserReference) {
+        // Свой заказ — управление сделкой дилером
         context.pushNamed(
-          'DealDetailCarrier',
+          'DealDetailDiller',
           queryParameters: {
             'dealRef': serializeParam(
               selectedMarker!.dealsRecord.reference,
@@ -257,9 +245,21 @@ class _DealsMapModeWidgetState extends State<DealsMapModeWidget> {
             ),
           }.withoutNulls,
         );
-
         return;
       }
+      // Чужой заказ: любой тип (в т.ч. дилер — он может быть драйвером)
+      // видит карточку отклика с предложением своей цены.
+      context.pushNamed(
+        'DealDetailCarrier',
+        queryParameters: {
+          'dealRef': serializeParam(
+            selectedMarker!.dealsRecord.reference,
+            ParamType.DocumentReference,
+          ),
+        }.withoutNulls,
+      );
+
+      return;
     } else {
       await showDialog(
         context: context,

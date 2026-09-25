@@ -268,21 +268,24 @@ class _DealsListModeWidgetState extends State<DealsListModeWidget> {
                               highlightColor: Colors.transparent,
                               onTap: () async {
                                 if (loggedIn) {
-                                  if (currentUserDocument?.type == UserType.Diller) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Чтобы видеть заказы, войдите как перевозчик',
-                                          style: TextStyle(
-                                            color: FlutterFlowTheme.of(context).primaryText,
-                                          ),
+                                  if (currentUserDocument?.type == UserType.Diller &&
+                                      dealsVarItem.owner == currentUserReference) {
+                                    // Свой заказ — управление сделкой дилером
+                                    context.pushNamed(
+                                      'DealDetailDiller',
+                                      queryParameters: {
+                                        'dealRef': serializeParam(
+                                          dealsVarItem.reference,
+                                          ParamType.DocumentReference,
                                         ),
-                                        duration: const Duration(milliseconds: 4000),
-                                        backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
-                                      ),
+                                      }.withoutNulls,
                                     );
                                     return;
-                                  } else {
+                                  }
+                                  // Чужой заказ: любой тип (в т.ч. дилер —
+                                  // он может быть драйвером) видит карточку
+                                  // отклика с предложением своей цены.
+                                  if (true) {
                                     context.pushNamed(
                                       'DealDetailCarrier',
                                       queryParameters: {
