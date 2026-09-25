@@ -103,9 +103,12 @@ workflows:
           echo "bitcode stripped"
       - name: Build IPA
         script: |
-          flutter build ipa --release --export-options-plist=ios/exportOptions.plist
+          set -o pipefail
+          flutter build ipa --release --export-options-plist=ios/exportOptions.plist 2>&1 | tee ipa_build.log
+          exit ${PIPESTATUS[0]}
     artifacts:
       - build/ios/ipa/*.ipa
+      - ipa_build.log
       - /tmp/xcodebuild_logs/*.log
     publishing:
       app_store_connect:
