@@ -50,3 +50,6 @@ crashlytics-build.log
 AuthKey_*.p8
 codemagic_token.txt
 AutoDealApp-master*/
+_private/
+_debug/
+*.mobileprovision
