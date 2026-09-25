@@ -53,3 +53,7 @@ AutoDealApp-master*/
 _private/
 _debug/
 *.mobileprovision
+GoogleService-Info.plist
+SHA_FINGERPRINTS.txt
+android_log*
+android_log.zip
